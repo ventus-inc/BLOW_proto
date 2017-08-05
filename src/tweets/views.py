@@ -15,31 +15,21 @@ from .forms import TweetModelForm
 class TweetCreateView(FormUserNeededMixin, CreateView):
     form_class = TweetModelForm
     template_name = 'tweets/create_view.html'
-    success_url = "tweet/create/"
+    # success_url = "tweet/create/"
     login_url = '/admin/'
 
-
-# def tweet_create_view(request):
-#     form = TweetModelForm(request.POST or None)
-#     if form.is_valid():
-#         instance = form.save(commit=False)
-#         instance.user = request.user
-#         instance.save()
-#     context = {
-#         "form":form
-#     }
-#     return render(request, 'tweets/create_view.html', context)
 
 class TweetUpdateView(LoginRequiredMixin, UserOwnerMixin, UpdateView):
     queryset = Tweet.objects.all()
     form_class = TweetModelForm
     template_name = 'tweets/update_view.html'
-    success_url = "/tweet/"
+    # success_url = "/tweet/"
+
 
 class TweetDeleteView(LoginRequiredMixin, DeleteView):
     model = Tweet
     template_name = 'tweets/delete_confirm.html'
-    success_url = reverse_lazy("home")
+    success_url = reverse_lazy("tweet:list")
 
 
 class TweetDetailView(DetailView):
