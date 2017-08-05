@@ -2,17 +2,16 @@
 
 {% block content %}
     <div class='row'>
-        <div class='co-sm-8 col-sm-offset-2'>
-            {% include "tweets/search_form.html" %}<br/>
+        <div class='col-sm-8 col-sm-offset-2'>
             {% for object in object_list %}
                 <div class="media">
                     {% if object.image %}
                     <img class="d-flex mr-3" src="..." alt="Generic placeholder image">
                     {% endif %}
-                  <div class="media-body">
-                    {{ object.content }} <br/>
-                    via {{ object.user }} | {{ object.timestamp|timesince }} ago | <a href="{{ object.get_absolute_url }}">View</a><br/>
-                  </div>
+                    <div class="media-body">
+                        {{ object.content }} <br/>
+                        via {{ object.user }} | {{ object.timestamp|timesince }} ago | <a href="{{ object.get_absolute_url }}">View</a><br/>
+                    </div>
                 </div>
                 <hr />
                 <br/>
