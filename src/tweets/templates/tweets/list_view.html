@@ -22,13 +22,16 @@
         var query = getParameterByName('q')
         var tweetList = [];
 
-        function attachTweet(tweetValue){
+        function attachTweet(tweetValue, prepend){
                 var dateDisplay = tweetValue.date_display
                 var tweetContent = tweetValue.content;
                 var tweetUser = tweetValue.user;
-                $("#tweet-container").append(
-                    "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + tweetUser.username + " | " + dateDisplay + " | " + "<a href='#'>View</a>" + "</div></div>"
-                )
+                var tweetFormattedHTML = "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + tweetUser.username + " | " + dateDisplay + " | " + "<a href='#'>View</a>" + "</div></div>"
+                if (prepend==true){
+                    $("#tweet-container").prepend(tweetFormattedHTML)
+                } else {
+                    $("#tweet-container").append(tweetFormattedHTML)
+                }
         }
 
         function parseTweets(){
@@ -65,8 +68,6 @@
         $("#tweet-form").submit(function(event){
             event.preventDefault()
             var this_ = $(this)
-            // console.log(event)
-            console.log(this_.serialize())
             var formData = this_.serialize()
             $.ajax({
                     url: "/api/tweet/create/",
@@ -74,7 +75,9 @@
                     method: "POST",
                     success: function(data){
                         // tweetList = data
-                        fetchTweets()
+                        this_.find("input[type=text], textarea").val("")
+                        attachTweet(data, true)
+                        // fetchTweets()
                     },
                     error: function(data){
                         console.log("error");
