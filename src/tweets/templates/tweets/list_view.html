@@ -27,7 +27,7 @@
                 var dateDisplay = tweetValue.date_display
                 var tweetContent = tweetValue.content;
                 var tweetUser = tweetValue.user;
-                var tweetFormattedHTML = "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + tweetUser.username + " | " + dateDisplay + " | " + "<a href='#'>View</a>" + "</div></div>"
+                var tweetFormattedHTML = "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + "via <a href='" + tweetUser.url + "'>" + tweetUser.username + "</a>" + " | " + dateDisplay + " | " + "<a href='#'>View</a>" + "</div></div>"
                 if (prepend==true){
                     $("#tweet-container").prepend(tweetFormattedHTML)
                 } else {
