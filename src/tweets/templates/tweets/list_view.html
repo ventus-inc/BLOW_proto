@@ -65,11 +65,34 @@
 
         fetchTweets()
 
+        var charsStart = 140;
+        var charsCurrent = 0;
+
+        $("#tweet-form").append("<span id='tweetCharsLeft'>" + charsStart + "</span>")
+        $("#tweet-form textarea").keyup(function(event){
+            var tweetValue = $(this).val()
+            charsCurrent = charsStart - tweetValue.length
+            var spanChars = $("#tweetCharsLeft")
+            spanChars.text(charsCurrent)
+
+            if (charsCurrent > 0) {
+                spanChars.removeClass("grey-color")
+                spanChars.removeClass("red-color")
+            } else if (charsCurrent == 0){
+                spanChars.removeClass("red-color")
+                spanChars.addClass("grey-color")
+            } else if (charsCurrent < 0){
+                spanChars.removeClass("grey-color")
+                spanChars.addClass("red-color")
+            }
+        })
+
         $("#tweet-form").submit(function(event){
             event.preventDefault()
             var this_ = $(this)
             var formData = this_.serialize()
-            $.ajax({
+            if charsCurrent >= 0 {
+                    $.ajax({
                     url: "/api/tweet/create/",
                     data: formData,
                     method: "POST",
@@ -85,6 +108,10 @@
                         console.log(data.status);
                     }
                 })
+            } else {
+                console.log("Too many characters")
+            }
+
         })
 
     });
