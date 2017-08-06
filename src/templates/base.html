@@ -40,8 +40,26 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script>
       $(document).ready(function(){
-        $("#navbar-search-form input[type=text]").keyup(function(event){
+        var typingTimer;
+        var doneInterval = 500;
+        var searchInput = $("#navbar-search-form input[type=text]");
+        var searchQuery;
+        searchInput.keyup(function(event){
+          searchQuery = $(this).val()
+          clearTimeout(typingTimer)
+          typingTimer = setTimeout(doneSearchTyping, doneInterval)
         })
+
+        searchInput.keydown(function(event){
+          clearTimeout(typingTimer)
+        })
+
+        function doneSearchTyping(){
+          // if(searchQuery){
+            var url = '/tweet/search/?q=' + searchQuery
+            document.location.href = url;
+          // }
+        }
       })
     </script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
