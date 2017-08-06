@@ -60,9 +60,23 @@
         $("#tweet-form").submit(function(event){
             event.preventDefault()
             var this_ = $(this)
-            console.log(event)
-            console.log(this_)
-            fetchTweets()
+            // console.log(event)
+            console.log(this_.serialize())
+            var formData = this_.serialize()
+            $.ajax({
+                    url: "/api/tweet/create",
+                    data: formData,
+                    method: "POST",
+                    success: function(data){
+                        // tweetList = data
+                        fetchTweets()
+                    },
+                    error: function(data){
+                        console.log("error");
+                        console.log(data.statusText)
+                        console.log(data.status);
+                    }
+                })
         })
 
     });
