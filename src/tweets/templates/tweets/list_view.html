@@ -22,18 +22,22 @@
         var query = getParameterByName('q')
         var tweetList = [];
 
+        function attachTweet(tweetValue){
+                var dateDisplay = tweetValue.date_display
+                var tweetContent = tweetValue.content;
+                var tweetUser = tweetValue.user;
+                $("#tweet-container").append(
+                    "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + tweetUser.username + " | " + dateDisplay + " | " + "<a href='#'>View</a>" + "</div></div>"
+                )
+        }
+
         function parseTweets(){
             if (tweetList == 0){
                 $("#tweet-container").text("No tweets currently found")
             } else {
                 $.each(tweetList, function(key, value){
                     var tweetKey = key;
-                    var dateDisplay = value.date_display
-                    var tweetContent = value.content;
-                    var tweetUser = value.user;
-                    $("#tweet-container").append(
-                        "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + tweetUser.username + " | " + dateDisplay + " | " + "<a href='#'>View</a>" + "</div></div>"
-                    )
+                    attachTweet(value)
                 })
             }
         };
