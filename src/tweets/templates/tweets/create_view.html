@@ -2,7 +2,9 @@
 
 {% block title %}| Create Tweet{% endblock title %}
 {% block content %}
-
-    {% include "tweets/form.html" with form=form btn_title='Tweet' %}
-
+<div class='row'>
+    <div class='col-sm-8 col-sm-offset-2'>
+        {% include "tweets/form.html" with form=form btn_title='Tweet' %}
+    </div>
+</div>
 {% endblock content %}
