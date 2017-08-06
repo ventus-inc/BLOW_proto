@@ -91,7 +91,7 @@
             event.preventDefault()
             var this_ = $(this)
             var formData = this_.serialize()
-            if charsCurrent >= 0 {
+            if (charsCurrent >= 0) {
                     $.ajax({
                     url: "/api/tweet/create/",
                     data: formData,
@@ -104,7 +104,7 @@
                     },
                     error: function(data){
                         console.log("error");
-                        console.log(data.statusText)
+                        console.log(data.statusText);
                         console.log(data.status);
                     }
                 })
