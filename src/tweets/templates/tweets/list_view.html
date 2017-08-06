@@ -37,27 +37,32 @@
             }
         };
 
-        $.ajax({
-            url: "/api/tweet/",
-            data: {
-                "q": query
-            },
-            method: "GET",
-            success: function(data){
-                tweetList = data
-                parseTweets()
-            },
-            error: function(data){
-                console.log("error");
-                console.log(data);
-            }
-        })
+        function fetchTweets(){
+            $.ajax({
+                url: "/api/tweet/",
+                data: {
+                    "q": query
+                },
+                method: "GET",
+                success: function(data){
+                    tweetList = data
+                    parseTweets()
+                },
+                error: function(data){
+                    console.log("error");
+                    console.log(data);
+                }
+            })
+        };
+
+        fetchTweets()
 
         $("#tweet-form").submit(function(event){
             event.preventDefault()
             var this_ = $(this)
             console.log(event)
-            console.log(this_
+            console.log(this_)
+            fetchTweets()
         })
 
     });
