@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.signals import post_save
 from django.conf import settings
 from django.urls import reverse_lazy
 
@@ -57,3 +58,13 @@ class UserProfile(models.Model):
 
     def get_absolute_url(self):
         return reverse_lazy("profiles:detail", kwargs={"username":self.user.username})
+
+# hoge = User.objects.first()
+# User.objects.get_or_create()
+
+def post_save_user_receiver(sender, instance, created, *args, **kwargs):
+    # print(instance)
+    if created:
+        new_profile = UserProfile.objects.get_or_create(user=instance)
+
+post_save.connect(post_save_user_receiver, sender=settings.AUTH_USER_MODEL)
