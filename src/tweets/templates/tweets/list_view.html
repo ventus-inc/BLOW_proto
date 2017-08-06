@@ -27,13 +27,14 @@
                 $("#tweet-container").text("No tweets currently found")
             } else {
                 $.each(tweetList, function(key, value){
-                var tweetKey = key;
-                var tweetContent = value.content;
-                var tweetUser = value.user;
-                $("#tweet-container").append(
-                    "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + tweetUser.username + " | " + "<a href='#'>View</a>" + "</div></div>"
-                )
-            })
+                    var tweetKey = key;
+                    var dateDisplay = value.date_display
+                    var tweetContent = value.content;
+                    var tweetUser = value.user;
+                    $("#tweet-container").append(
+                        "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + tweetUser.username + " | " + dateDisplay + " | " + "<a href='#'>View</a>" + "</div></div>"
+                    )
+                })
             }
         };
 
@@ -64,7 +65,7 @@
             console.log(this_.serialize())
             var formData = this_.serialize()
             $.ajax({
-                    url: "/api/tweet/create",
+                    url: "/api/tweet/create/",
                     data: formData,
                     method: "POST",
                     success: function(data){
