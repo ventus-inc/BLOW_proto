@@ -2,7 +2,15 @@
 
 {% block content %}
     <div class='row'>
-        <div class='col-sm-8 col-sm-offset-2'>
+        <div class='col-sm-3 col-xs-12' style='background-color: red;'>
+            <h1>{{ request.user }}</h1>
+        </div>
+        <div class='col-sm-9'>
+            {% if not request.GET.q %}
+            <div class=''>
+                {% include "tweets/form.html" with form=create_form action_url=create_url btn_title='Tweet' %}
+            </div>
+            {% endif %}
             {% for object in object_list %}
                 <div class="media">
                     {% if object.image %}
@@ -10,7 +18,7 @@
                     {% endif %}
                     <div class="media-body">
                         {{ object.content }} <br/>
-                        via {{ object.user }} | {{ object.timestamp|timesince }} ago | <a href="{{ object.get_absolute_url }}">View</a><br/>
+                        via {{ object.user }} | {{ object.timestamp|timesince }} ago | <a href="{{ object.get_absolute_url }}">View</a>
                     </div>
                 </div>
                 <hr />
