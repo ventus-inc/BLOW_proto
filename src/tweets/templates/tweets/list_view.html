@@ -21,12 +21,22 @@
 
         var query = getParameterByName('q')
         var tweetList = [];
+        var nextTweetUrl;
+
+        function updateHashLinks() {
+            $(".media-body").each(function(data){
+                var hashtagRegex = /(^|\s)#([\w\d-]+)/g
+                var newText = $(this).html().replace(hashtagRegex, "$1<a href='/tags/$2/'>#$2</a>")
+                $(this).html(newText)
+
+            })
+        }
 
         function attachTweet(tweetValue, prepend){
                 var dateDisplay = tweetValue.date_display
                 var tweetContent = tweetValue.content;
                 var tweetUser = tweetValue.user;
-                var tweetFormattedHTML = "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + tweetUser.username + " | " + dateDisplay + " | " + "<a href='#'>View</a>" + "</div></div>"
+                var tweetFormattedHTML = "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + "via <a href='" + tweetUser.url + "'>" + tweetUser.username + "</a>" + " | " + dateDisplay + " | " + "<a href='#'>View</a>" + "</div></div>"
                 if (prepend==true){
                     $("#tweet-container").prepend(tweetFormattedHTML)
                 } else {
@@ -45,16 +55,31 @@
             }
         };
 
-        function fetchTweets(){
+        function fetchTweets(url){
+            console.log("fetching")
+            var fetchUrl;
+            if (!url) {
+                fetchUrl = "/api/tweet/"
+            } else {
+                fetchUrl = url
+            }
+
             $.ajax({
-                url: "/api/tweet/",
+                url: fetchUrl,
                 data: {
                     "q": query
                 },
                 method: "GET",
                 success: function(data){
-                    tweetList = data
+                    console.log(data)
+                    tweetList = data.results
+                    if (data.next) {
+                        nextTweetUrl = data.next
+                    } else {
+                        $("#loadmore").css("display", "none")
+                    }
                     parseTweets()
+                    updateHashLinks()
                 },
                 error: function(data){
                     console.log("error");
@@ -64,6 +89,13 @@
         };
 
         fetchTweets()
+
+        $("#loadmore").click(function(event){
+            event.preventDefault()
+            if (nextTweetUrl) {
+                fetchTweets(nextTweetUrl)
+            }
+        })
 
         var charsStart = 140;
         var charsCurrent = 0;
@@ -100,6 +132,7 @@
                         // tweetList = data
                         this_.find("input[type=text], textarea").val("")
                         attachTweet(data, true)
+                        updateHashLinks()
                         // fetchTweets()
                     },
                     error: function(data){
@@ -130,6 +163,7 @@
             </div>
             {% endif %}
             <div id='tweet-container'></div>
+            <a href='#' id='loadmore'>Load More</a>
         </div>
     </div>
 {% endblock content %}
