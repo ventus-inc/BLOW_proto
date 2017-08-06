@@ -1,5 +1,62 @@
 {% extends "base.html" %}
 
+{% block script %}
+<script>
+
+    function getParameterByName(name, url) {
+        if (!url) {
+            url = window.location.href;
+        }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    $(document).ready(function(){
+
+        console.log("working");
+
+        var query = getParameterByName('q')
+        var tweetList = [];
+
+        function parseTweets(){
+            if (tweetList == 0){
+                $("#tweet-container").text("No tweets currently found")
+            } else {
+                $.each(tweetList, function(key, value){
+                var tweetKey = key;
+                var tweetContent = value.content;
+                var tweetUser = value.user;
+                $("#tweet-container").append(
+                    "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + tweetUser.username + " | " + "<a href='#'>View</a>" + "</div></div>"
+                )
+            })
+            }
+        };
+
+        $.ajax({
+            url: "/api/tweet/",
+            data: {
+                "q": query
+            },
+            method: "GET",
+            success: function(data){
+                tweetList = data
+                parseTweets()
+            },
+            error: function(data){
+                console.log("error");
+                console.log(data);
+            }
+        })
+
+    });
+</script>
+{% endblock script %}
+
 {% block content %}
     <div class='row'>
         <div class='col-sm-3 col-xs-12' style='background-color: red;'>
@@ -11,25 +68,7 @@
                 {% include "tweets/form.html" with form=create_form action_url=create_url btn_title='Tweet' %}
             </div>
             {% endif %}
-            {% for object in object_list %}
-                <div class="media">
-                    {% if object.image %}
-                    <img class="d-flex mr-3" src="..." alt="Generic placeholder image">
-                    {% endif %}
-                    <div class="media-body">
-                        {{ object.content }} <br/>
-                        via {{ object.user }} | {{ object.timestamp|timesince }} ago | <a href="{{ object.get_absolute_url }}">View</a>
-                    </div>
-                </div>
-                <hr />
-                <br/>
-            {% empty %}
-                {% if request.GET.q %}
-                <p>No tweets found.</p>
-                {% else %}
-                <p>No tweets yet.</p>
-                {% endif %}
-            {% endfor %}
+            <div id='tweet-container'></div>
         </div>
     </div>
 {% endblock content %}
