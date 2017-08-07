@@ -50,7 +50,7 @@
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
-    function loadTweetContainer(tweetContainerID){
+    function loadTweetContainer(tweetContainerID, fetchOneId){
 
 
         console.log("working");
@@ -250,7 +250,36 @@
             })
         };
 
-        fetchTweets()
+        function fetchSingle(fetchOneId){
+
+            var fetchDetailUrl = '/api/tweet/' + fetchOneId + '/'
+
+            $.ajax({
+                url: fetchDetailUrl,
+                method: "GET",
+                success: function(data){
+                    console.log(data)
+                    tweetList = [data]
+                    // if (data.next) {
+                    //     nextTweetUrl = data.next
+                    // } else {
+                    //     $("#loadmore").css("display", "none")
+                    // }
+                    parseTweets()
+                    updateHashLinks()
+                },
+                error: function(data){
+                    console.log("error");
+                    console.log(data);
+                }
+            })
+        };
+
+        if(fetchOneId){
+          fetchSingle(fetchOneId)
+        } else {
+          fetchTweets()
+        }
 
         $("#loadmore").click(function(event){
             event.preventDefault()
