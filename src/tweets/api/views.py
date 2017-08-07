@@ -7,6 +7,19 @@ from tweets.models import Tweet
 from .serializers import TweetModelSerializer
 from .pagination import StandardResultsPagination
 
+
+class LikeToggleAPIView(APIView):
+    permissions_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, pk, format=None):
+        tweet_qs = Tweet.objects.filter(pk=pk)
+        message = "Not allowed"
+        if request.user.is_authenticated():
+            is_liked = Tweet.objects.like_toggle(request.user, tweet_qs.first())
+            return Response({"liked": is_liked})
+        return Response({"message":message}, status=400)
+
+
 class RetweetAPIView(APIView):
     permissions_classes = [permissions.IsAuthenticated]
 
@@ -22,12 +35,14 @@ class RetweetAPIView(APIView):
                 message = "Cannot retweet more than twice in 1 day"
         return Response({"message":message}, status=400)
 
+
 class TweetCreateAPIView(generics.CreateAPIView):
     serializer_class = TweetModelSerializer
     permissions_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
 
 class TweetListAPIView(generics.ListAPIView):
     serializer_class = TweetModelSerializer
@@ -49,6 +64,7 @@ class TweetListAPIView(generics.ListAPIView):
                 Q(user__username__icontains=query)
                 )
         return qs
+
 
 class SearchAPIView(generics.ListAPIView):
     serializer_class = TweetModelSerializer
