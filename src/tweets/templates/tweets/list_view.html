@@ -15,13 +15,16 @@
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
-    $(document).ready(function(){
+    function loadTweetContainer(){
+
 
         console.log("working");
 
         var query = getParameterByName('q')
         var tweetList = [];
         var nextTweetUrl;
+        var initialURL = "/api/tweet/";
+        var tweetContainer = $("#tweet-container")
 
         $(document.body).on("click", ".retweetBtn", function(event){
             event.preventDefault()
@@ -68,15 +71,15 @@
                     tweetFormattedHTML = "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + "via <a href='" + tweetUser.url + "'>" + tweetUser.username + "</a>" + " | " + dateDisplay + " | " + "<a href='/tweet/" + tweetValue.id + "'>View</a> | " + "<a class='retweetBtn' href='/tweet/" + tweetValue.id + "/retweet'>Retweet</a>" + "</div></div>"
                 }
                 if (prepend==true){
-                    $("#tweet-container").prepend(tweetFormattedHTML)
+                    tweetContainer.prepend(tweetFormattedHTML)
                 } else {
-                    $("#tweet-container").append(tweetFormattedHTML)
+                    tweetContainer.append(tweetFormattedHTML)
                 }
         }
 
         function parseTweets(){
             if (tweetList == 0){
-                $("#tweet-container").text("No tweets currently found")
+                tweetContainer.text("No tweets currently found")
             } else {
                 $.each(tweetList, function(key, value){
                     var tweetKey = key;
@@ -93,7 +96,7 @@
             console.log("fetching")
             var fetchUrl;
             if (!url) {
-                fetchUrl = "/api/tweet/"
+                fetchUrl = initialURL
             } else {
                 fetchUrl = url
             }
@@ -181,7 +184,13 @@
 
         })
 
+    }
+
+    $(document).ready(function(){
+        loadTweetContainer()
     });
+
+
 </script>
 {% endblock script %}
 
