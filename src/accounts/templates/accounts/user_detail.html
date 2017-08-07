@@ -17,17 +17,6 @@
             <a class='btn btn-link' href='{{ object.profile.get_follow_url }}'>{% if following %} UnFollow {% else %} Follow {% endif %}
             </a>
         </p>
-    </div>
-    <div class='col-sm-9 col-xs-12'>
-        <h1>Tweets</h1>
-
-        <div id='tweet-container' data-url='/api/{{ object.username }}/tweet/'></div>
-        <a href='#' id='loadmore'>Load More</a>
-<!--         {% for tweet in object.tweet_set.all %}
-            {{ tweet }}<br/>
-        {% endfor %} -->
-
-
         <hr/>
         <h1>Following <small>{{ object.profile.get_following.count }}</small></h1>
         {% for user in object.profile.get_following %}
@@ -43,6 +32,14 @@
         {% empty %}
         <h4>Not followed by any users</h4>
         {% endfor %}
+    </div>
+    <div class='col-sm-9 col-xs-12'>
+        <h1>Tweets</h1>
+
+        <div id='tweet-container' data-url='/api/{{ object.username }}/tweet/'></div>
+        <a href='#' id='loadmore'>Load More</a>
+
+
     </div>
 </div>
 {% endblock content %}
