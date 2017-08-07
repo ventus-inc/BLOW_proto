@@ -2,12 +2,9 @@
 
 {% block script %}
 <script>
-
     $(document).ready(function(){
-        loadTweetContainer()
+        loadTweetContainer("tweet-container")
     });
-
-
 </script>
 {% endblock script %}
 
@@ -22,7 +19,7 @@
                 {% include "tweets/form.html" with form=create_form action_url=create_url btn_title='Tweet' form_id='tweet-form' %}
             </div>
             {% endif %}
-            <div id='tweet-container'></div>
+            <div id='tweet-container' data-url='/api/tweet/'></div>
             <a href='#' id='loadmore'>Load More</a>
         </div>
     </div>
