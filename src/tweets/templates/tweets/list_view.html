@@ -39,9 +39,9 @@
                 var tweetFormattedHTML;
                 if (retweet && tweetValue.parent) {
                     var mainTweet = tweetValue.parent
-                    tweetFormattedHTML = "<div class=\"media\"><div class=\"media-body\"><span class='grey-color'>Retweet via " + tweetUser.username + " on " + dateDisplay + "</span><br/>" + mainTweet.content + "<br/>" + "via <a href='" + mainTweet.user.url + "'>" + mainTweet.user.username + "</a>" + " | " + mainTweet.date_display + " | " + "<a href='/tweet/" + mainTweet.id + "'>View</a>" + "</div></div>"
+                    tweetFormattedHTML = "<div class=\"media\"><div class=\"media-body\"><span class='grey-color'>Retweet via " + tweetUser.username + " on " + dateDisplay + "</span><br/>" + mainTweet.content + "<br/>" + "via <a href='" + mainTweet.user.url + "'>" + mainTweet.user.username + "</a>" + " | " + mainTweet.date_display + " | " + "<a href='/tweet/" + mainTweet.id + "'>View</a> | " + "<a href='/tweet/" + tweetValue.id + "/retweet'>Retweet</a>" + "</div></div>"
                 } else {
-                    tweetFormattedHTML = "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + "via <a href='" + tweetUser.url + "'>" + tweetUser.username + "</a>" + " | " + dateDisplay + " | " + "<a href='/tweet/" + tweetValue.id + "'>View</a>" + "</div></div>"
+                    tweetFormattedHTML = "<div class=\"media\"><div class=\"media-body\">" + tweetContent + "<br/>" + "via <a href='" + tweetUser.url + "'>" + tweetUser.username + "</a>" + " | " + dateDisplay + " | " + "<a href='/tweet/" + tweetValue.id + "'>View</a> | " + "<a href='/tweet/" + tweetValue.id + "/retweet'>Retweet</a>" + "</div></div>"
                 }
                 if (prepend==true){
                     $("#tweet-container").prepend(tweetFormattedHTML)
@@ -141,7 +141,7 @@
                     success: function(data){
                         // tweetList = data
                         this_.find("input[type=text], textarea").val("")
-                        attachTweet(data, true)
+                        attachTweet(data, true, false)
                         updateHashLinks()
                         // fetchTweets()
                     },
