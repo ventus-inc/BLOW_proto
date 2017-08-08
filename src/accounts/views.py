@@ -25,11 +25,12 @@ class UserRegisterView(FormView):
         password = form.cleaned_data.get("password")
         new_user = User.objects.create(username=username, email=email)
         new_user.set_password(password)
+
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
-        web3.personal.newAccount(username)
+        wallet_id = web3.personal.newAccount(username)
+        new_user.wallet_id = wallet_id
 
         new_user.save()
-
         return super(UserRegisterView, self).form_valid(form)
 
 class UserDetailView(DetailView):
@@ -58,3 +59,4 @@ class UserFollowView(View):
         if request.user.is_authenticated():
             is_following = UserProfile.objects.toggle_follow(request.user, toggle_user)
         return redirect("profiles:detail", username=username)
+

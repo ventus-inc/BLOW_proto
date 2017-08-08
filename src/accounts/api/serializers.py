@@ -15,6 +15,7 @@ class UserDisplaySerializer(serializers.ModelSerializer):
             'last_name',
             'follower_count',
             'url',
+            'wallet_id',
         ]
 
     def get_follower_count(self, obj):

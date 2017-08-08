@@ -42,6 +42,7 @@ class UserProfileManager(models.Manager):
         qs = self.get_queryset().exclude(user__in=following).exclude(id=profile.id).order_by("?")[:limit_to]
         return qs
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -50,6 +51,9 @@ class UserProfile(models.Model):
         settings.AUTH_USER_MODEL,
         blank=True,
         related_name='followed_by')
+    wallet_id = models.CharField(
+        default=0,
+        max_length=40,)
 
     objects = UserProfileManager()
 
@@ -69,9 +73,11 @@ class UserProfile(models.Model):
 # hoge = User.objects.first()
 # User.objects.get_or_create()
 
+
 def post_save_user_receiver(sender, instance, created, *args, **kwargs):
     # print(instance)
     if created:
         new_profile = UserProfile.objects.get_or_create(user=instance)
 
 post_save.connect(post_save_user_receiver, sender=settings.AUTH_USER_MODEL)
+
