@@ -145,8 +145,14 @@
                 // 後ろのもので上書きされてしまう・・・
 
                 userText = currentHtml.replace(usernameRegex, "$1<a href='profiles/$2/'>@$2</a>")
+                console.log("userText1")
+                console.log(userText)
                 $(this).html(userText)
                 hashText = currentHtml.replace(hashtagRegex, "$1<a href='/tags/$2/'>#$2</a>")
+                console.log("userText2")
+                console.log(userText)
+                console.log("hashText3")
+                console.log(hashText)
                 $(this).html(hashText)
 
             })
