@@ -8,9 +8,7 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
 ## QuickStart
 * 仮想環境を立ち上げる
 
-    ```
-    . bin/activate
-    ```
+    ```. bin/activate```
     
 * pip で必要パッケージのインストール
 
