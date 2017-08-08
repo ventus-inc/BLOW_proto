@@ -56,6 +56,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'prototype_blow.urls'
+LOGIN_URL = "/login"
+LOGIN_REDIRECT_URL = "/"
 
 TEMPLATES = [
     {
