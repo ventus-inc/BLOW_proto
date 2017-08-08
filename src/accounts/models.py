@@ -14,7 +14,6 @@ class UserProfileManager(models.Manager):
                 qs = qs.exclude(user=self.instance)
         except:
             pass
-        print(self)
         return qs
 
     def toggle_follow(self, user, to_toggle_user):
