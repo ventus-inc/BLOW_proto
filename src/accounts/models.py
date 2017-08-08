@@ -14,7 +14,6 @@ class UserProfileManager(models.Manager):
                 qs = qs.exclude(user=self.instance)
         except:
             pass
-        # print(self)
         return qs
 
     def toggle_follow(self, user, to_toggle_user):
@@ -64,7 +63,6 @@ class UserProfile(models.Model):
         return reverse_lazy("profiles:follow", kwargs={"username":self.user.username})
 
     def get_absolute_url(self):
-        print(self.user.username)
         return reverse_lazy("profiles:detail", kwargs={"username":self.user.username})
 
 # hoge = User.objects.first()
