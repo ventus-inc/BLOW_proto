@@ -21,7 +21,7 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
 1.10.3をインストールしている
 * DBを作成
 
-```
+    ```
     python manage.py makemigrations
     python manage.py migrate
-```
+    ```
