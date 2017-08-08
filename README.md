@@ -25,7 +25,7 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
     ```
     pip freeze` or `django-admin.py version
     ```
-1.10.3をインストールしている
+    1.10.3をインストールしている
 * DBを作成
 
     ```
@@ -37,5 +37,10 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
 
     ```
     python manage.py createsuperuser
+    ```
+* 起動
+
+    ```
+    python manage.py runserver
     ```
 
