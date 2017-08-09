@@ -18,14 +18,12 @@ class UserRegisterView(FormView):
     form_class = UserRegisterForm
     success_url = '/'
 
-
     def form_valid(self, form):
         username = form.cleaned_data.get("username")
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
         new_user = User.objects.create(username=username, email=email)
         new_user.set_password(password)
-
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
         wallet_id = web3.personal.newAccount(username)
         new_user.profile.wallet_id = wallet_id
