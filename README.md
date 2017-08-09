@@ -51,9 +51,9 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
     
     ```
     python manage.py makemigrations
-    
+    ```
     は
-    
+    ```
     make migrations
     ```
 
@@ -61,9 +61,9 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
     
     ```
     python manage.py migrate
-    
+    ```
     は
-    
+    ```
     make migrate
     ```
     
@@ -71,8 +71,7 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
 
     ```
     python manage.py runserver
-    
-    は
-    
+    ```
+    ```
     make run
     ```
