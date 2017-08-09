@@ -58,4 +58,3 @@ class UserFollowView(View):
         if request.user.is_authenticated():
             is_following = UserProfile.objects.toggle_follow(request.user, toggle_user)
         return redirect("profiles:detail", username=username)
-

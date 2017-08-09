@@ -42,7 +42,6 @@ class UserProfileManager(models.Manager):
         qs = self.get_queryset().exclude(user__in=following).exclude(id=profile.id).order_by("?")[:limit_to]
         return qs
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -72,7 +71,6 @@ class UserProfile(models.Model):
 
 # hoge = User.objects.first()
 # User.objects.get_or_create()
-
 
 def post_save_user_receiver(sender, instance, created, *args, **kwargs):
     # print(instance)
