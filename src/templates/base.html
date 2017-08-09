@@ -183,7 +183,9 @@
             verb = 'Unlike'
           }
 
-          tweetContent = "<span class='content'>" + tweetValue.content + "</span><br/>via <a href='" + tweetValue.user.url + "'>" + tweetValue.user.username + "</a>" + " | " + tweetValue.date_display + " | " + "<a href='/tweet/" + tweetValue.id + "'>View</a> | " + "<a class='retweetBtn' href='/tweet/" + tweetValue.id + "/retweet'>Retweet</a>" + " | <a href='#' class='tweet-like' data-id=" + tweetValue.id + ">"+verb+" (" + tweetValue.likes + ")</a>" + " | <a href='#' class='tweet-reply' data-user='" + tweetValue.user.username + "' data-id='" + replyId + "'>Reply</a>"
+          console.log(tweetValue.id)
+
+          tweetContent = "<span class='content'>" + tweetValue.content + "</span><br/>via <a href='" + tweetValue.user.url + "'>" + tweetValue.user.username + "</a>" + " | " + tweetValue.date_display + " | " + "<a href='/tweet/" + tweetValue.id + "'>View</a> | " + "<a class='retweetBtn' href='/tweet/" + tweetValue.id + "/retweet'>Retweet</a>" + " | <a href='#' class='tweet-like' data-id=" + tweetValue.id + ">"+verb+" (" + tweetValue.likes + ")</a>" + " | <a href='#' class='tweet-reply' data-user='" + tweetValue.user.username + "' data-id='" + replyId + "'>Reply</a>" + " | <a href='" + "tweet/" + tweetValue.id + "/delete/" + "' > Delete</a>"
 
 
           if (preContent) {
