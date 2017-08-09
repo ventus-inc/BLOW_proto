@@ -28,8 +28,9 @@ class UserRegisterView(FormView):
 
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
         wallet_id = web3.personal.newAccount(username)
-        new_user.wallet_id = wallet_id
-
+        new_user.profile.wallet_id = wallet_id
+        print(wallet_id)
+        new_user.profile.save()
         new_user.save()
         return super(UserRegisterView, self).form_valid(form)
 
