@@ -46,22 +46,33 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
 
 # Makefile作りました
     
-    src/ディレクトリで
+    
+    
     
     ```
     python manage.py makemigrations
+    
     は
+    
     make migrations
     ```
+
+
     
     ```
     python manage.py migrate
+    
     は
+    
     make migrate
     ```
     
+
+
     ```
     python manage.py runserver
+    
     は
+    
     make run
     ```
