@@ -137,3 +137,6 @@ _build
 #ignore db updates#
 db.sqlite3
 blow/migrations
+
+#ignore package updates
+bin/
