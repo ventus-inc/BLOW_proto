@@ -23,7 +23,6 @@ class RetweetView(View):
         return HttpResponseRedirect(tweet.get_absolute_url())
 
 
-
 class TweetCreateView(FormUserNeededMixin, CreateView):
     form_class = TweetModelForm
     template_name = 'tweets/create_view.html'

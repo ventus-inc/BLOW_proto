@@ -120,3 +120,17 @@ class SearchAPIView(generics.ListAPIView):
                     Q(user__username__icontains=query)
                     )
         return qs
+
+
+class TweetDeleteAPIView(generics.DestroyAPIView):
+    permissions_classes = [permissions.IsAuthenticated]
+    serializer_class = TweetModelSerializer
+    pagination_class = StandardResultsPagination
+
+    def get_queryset(self, *args, **kwargs):
+        qs = Tweet.objects.filter(pk=pk)
+        message = "Not allowed"
+        if request.user.is_authenticated():
+            message = "Deleted"
+            return Response({"message": message}, status=204)
+        return Response({"message":message}, status=400)

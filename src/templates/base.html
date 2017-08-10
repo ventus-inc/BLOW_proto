@@ -33,6 +33,7 @@
   <body>
     {% include "navbar.html" %}
     {% include "reply-modal.html" %}
+    {% include "delete-modal.html" %}
     <div class='container'>
       {% block content %}
       {% endblock %}
@@ -111,10 +112,25 @@
             })
         })
 
+        $(document.body).on("click", ".tweet-delete", function(event){
+            event.preventDefault()
+            var this_ = $(this)
+            var parentId = this_.attr("data-id")
+            var content = this_.parent().parent().find(".content").text()
+            console.log(parentId)
+            console.log(content)
+            console.log(this_.parent().parent())
+            $("#deleteModal").modal({})
+            $("#deleteModal textarea").after("<input type='hidden' value='" + parentId + "' name='parent_id' />")
+            $("#deleteModal textarea").after("<input type='hidden' value='" + true + "' name='delete' />")
+            $("#deleteModal #deleteModalLabel").text("Are you sure to delete " + content)
+            $(".deleteBtn").attr("href", "/tweet/"+parentId+"/delete/")
+        })
+
 
         $(document.body).on("click", ".retweetBtn", function(event){
             event.preventDefault()
-            console.log("clicked")
+            console.log("retweetBtn clicked")
             var url = "/api" + $(this).attr("href")
 
             $.ajax({
@@ -128,7 +144,30 @@
                     }
                 },
                 error: function(data){
-                    console.log(error)
+                    console.log("error")
+                    console.log(data)
+                }
+            })
+        })
+
+        $(document.body).on("click", ".deleteBtn", function(event){
+            event.preventDefault()
+            console.log("deleteBtn clicked")
+            var url = "/api" + $(this).attr("href")
+
+            $.ajax({
+                method: "DELETE",
+                url: url,
+                success: function(data){
+                    console.log(data)
+                    if (initialURL == "/api/tweet/") {
+                      updateHashLinks()
+                      $("#replyModal").modal("hide")
+                      fetchTweets()
+                    }
+                },
+                error: function(data){
+                    console.log("error")
                     console.log(data)
                 }
             })
@@ -183,9 +222,7 @@
             verb = 'Unlike'
           }
 
-          console.log(tweetValue.id)
-
-          tweetContent = "<span class='content'>" + tweetValue.content + "</span><br/>via <a href='" + tweetValue.user.url + "'>" + tweetValue.user.username + "</a>" + " | " + tweetValue.date_display + " | " + "<a href='/tweet/" + tweetValue.id + "'>View</a> | " + "<a class='retweetBtn' href='/tweet/" + tweetValue.id + "/retweet'>Retweet</a>" + " | <a href='#' class='tweet-like' data-id=" + tweetValue.id + ">"+verb+" (" + tweetValue.likes + ")</a>" + " | <a href='#' class='tweet-reply' data-user='" + tweetValue.user.username + "' data-id='" + replyId + "'>Reply</a>" + " | <a href='" + "tweet/" + tweetValue.id + "/delete/" + "' > Delete</a>"
+          tweetContent = "<span class='content'>" + tweetValue.content + "</span><br/>via <a href='" + tweetValue.user.url + "'>" + tweetValue.user.username + "</a>" + " | " + tweetValue.date_display + " | " + "<a href='/tweet/" + tweetValue.id + "'>View</a> | " + "<a class='retweetBtn' href='/tweet/" + tweetValue.id + "/retweet'>Retweet</a>" + " | <a href='#' class='tweet-like' data-id=" + tweetValue.id + ">"+verb+" (" + tweetValue.likes + ")</a>" + " | <a href='#' class='tweet-reply' data-user='" + tweetValue.user.username + "' data-id='" + replyId + "'>Reply</a>" + " | <a href='" + "tweet/" + tweetValue.id + "/delete/' class='tweet-delete' data-id="+ tweetValue.id +" > Delete</a>"
 
 
           if (preContent) {
