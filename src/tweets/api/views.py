@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from tweets.models import Tweet
 from .serializers import TweetModelSerializer
@@ -127,10 +128,13 @@ class TweetDeleteAPIView(generics.DestroyAPIView):
     serializer_class = TweetModelSerializer
     pagination_class = StandardResultsPagination
 
+    def get_object(self):
+        obj = get_object_or_404(self.get_queryset())
+        self.check_object_permissions(self.request, obj)
+        return obj
+
     def get_queryset(self, *args, **kwargs):
-        qs = Tweet.objects.filter(pk=pk)
-        message = "Not allowed"
-        if request.user.is_authenticated():
-            message = "Deleted"
-            return Response({"message": message}, status=204)
-        return Response({"message":message}, status=400)
+        tweet_id = self.kwargs.get("pk")
+        qs = Tweet.objects.filter(pk=tweet_id)
+        return qs
+
