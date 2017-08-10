@@ -7,6 +7,7 @@ from django.db.models import Q
 from tweets.models import Tweet
 from .serializers import TweetModelSerializer
 from .pagination import StandardResultsPagination
+from .permissions import IsOwner
 
 
 class LikeToggleAPIView(APIView):
@@ -124,17 +125,24 @@ class SearchAPIView(generics.ListAPIView):
 
 
 class TweetDeleteAPIView(generics.DestroyAPIView):
-    permissions_classes = [permissions.IsAuthenticated]
+    permissions_classes = [IsOwner]
     serializer_class = TweetModelSerializer
     pagination_class = StandardResultsPagination
 
-    def get_object(self):
-        obj = get_object_or_404(self.get_queryset())
-        self.check_object_permissions(self.request, obj)
-        return obj
+    # def get_object(self):
+    #     obj = get_object_or_404(self.get_queryset())
+    #     self.check_object_permissions(self.request, obj)
+    #     print(obj)
+    #     print(self.check_object_permissions(self.request, obj))
+    #     return obj
 
     def get_queryset(self, *args, **kwargs):
         tweet_id = self.kwargs.get("pk")
         qs = Tweet.objects.filter(pk=tweet_id)
+        obj_user = Tweet.objects.filter(pk=tweet_id)[0].user
+        request_user = self.request.user
+        message = "Not allowed"
+        if obj_user != request_user:
+            return None
         return qs
 
