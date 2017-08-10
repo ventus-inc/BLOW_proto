@@ -158,6 +158,9 @@
             $.ajax({
                 method: "DELETE",
                 url: url,
+                beforeSend: function(xhr) {
+                xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                },
                 success: function(data){
                     console.log(data)
                     if (initialURL == "/api/tweet/") {
