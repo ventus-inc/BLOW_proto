@@ -10,7 +10,7 @@ class UserRegisterForm(forms.Form):
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
 
 
-    def clean_password(self):
+    def clean_password2(self):
         password = self.cleaned_data.get('password')
         password2 = self.cleaned_data.get('password2')
         if password != password2:
