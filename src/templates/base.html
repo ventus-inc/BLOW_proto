@@ -225,6 +225,10 @@
             verb = 'Unlike'
           }
 
+          login_user = "{{ request.user.username }}"
+          tweet_user = tweetValue.user.username
+
+
           tweetContent = "<span class='content'>" + tweetValue.content + "</span><br/>via <a href='" + tweetValue.user.url + "'>" + tweetValue.user.username + "</a>" + " | " + tweetValue.date_display + " | " + "<a href='/tweet/" + tweetValue.id + "'>View</a> | " + "<a class='retweetBtn' href='/tweet/" + tweetValue.id + "/retweet'>Retweet</a>" + " | <a href='#' class='tweet-like' data-id=" + tweetValue.id + ">"+verb+" (" + tweetValue.likes + ")</a>" + " | <a href='#' class='tweet-reply' data-user='" + tweetValue.user.username + "' data-id='" + replyId + "'>Reply</a>"
 
           if (login_user == tweet_user) {
