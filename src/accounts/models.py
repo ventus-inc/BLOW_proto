@@ -49,7 +49,7 @@ class UserProfile(models.Model):
         settings.AUTH_USER_MODEL,
         blank=True,
         related_name='followed_by')
-
+    image = models.ImageField(upload_to='profile_image',blank=True)
     objects = UserProfileManager()
 
     def __str__(self):
