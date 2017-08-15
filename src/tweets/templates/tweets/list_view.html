@@ -14,6 +14,7 @@
         <div class='col-sm-3 col-xs-12'>
             <h1>{{ request.user }}</h1>
             <br/>
+            <img src="{{ request.user.profile.image.url }}" width="240">
 
             <hr/>
             <h1>Recommended</h1>
