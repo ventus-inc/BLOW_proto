@@ -55,13 +55,13 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
 
 
     
-    ```python manage.py migrate```
+    python manage.py migrate
     
     は
     
-    ```make migrate```
+    make migrate
     
 
 
-    ```python manage.py runserver```
-    ```make run```
+    python manage.py runserver
+    make run
