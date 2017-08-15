@@ -54,7 +54,7 @@ class UserProfile(models.Model):
         WalletProfile,
         blank=True,
         null=True,
-        )
+        related_name='wallet')
 
     objects = UserProfileManager()
 
