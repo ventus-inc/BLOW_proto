@@ -45,15 +45,12 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
     ```
 
 ## Makefile作りました
-    ```
     python manage.py makemigrations
-    ```
     
     は
     
-    ```
     make migrations
-    ```
+    
 
 
     
