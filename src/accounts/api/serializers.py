@@ -30,4 +30,4 @@ class UserDisplaySerializer(serializers.ModelSerializer):
         return reverse_lazy("profiles:detail", kwargs={"username": obj.username})
 
     def get_wallet_id(self, obj):
-        return obj.profile.wallet_id
+        return obj.wallet_num

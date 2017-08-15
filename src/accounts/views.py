@@ -8,6 +8,7 @@ from django.views.generic.edit import FormView
 from web3 import Web3, KeepAliveRPCProvider
 from .models import UserProfile
 from .forms import UserRegisterForm
+from wallets.models import WalletProfile
 
 # Create your views here.
 
@@ -25,9 +26,11 @@ class UserRegisterView(FormView):
         new_user = User.objects.create(username=username, email=email)
         new_user.set_password(password)
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
-        wallet_id = web3.personal.newAccount(username)
-        new_user.profile.wallet_id = wallet_id
+        #host='localhost' port=8545 は　geth のデフォルト値
+        wallet_num = web3.personal.newAccount(username)
+        new_user.profile.wallet_num = wallet_num
         new_user.profile.save()
+
         new_user.save()
         return super(UserRegisterView, self).form_valid(form)
 

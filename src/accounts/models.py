@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.urls import reverse_lazy
-
+from wallets.models import WalletProfile
 # Create your models here.
 
 class UserProfileManager(models.Manager):
@@ -50,9 +50,11 @@ class UserProfile(models.Model):
         settings.AUTH_USER_MODEL,
         blank=True,
         related_name='followed_by')
-    wallet_id = models.CharField(
-        default=0,
-        max_length=40,)
+    wallet = models.OneToOneField(
+        WalletProfile,
+        blank=True,
+        null=True,
+        )
 
     objects = UserProfileManager()
 
