@@ -12,7 +12,9 @@
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
+    {% if request.user.is_authenticated %}
     {% include "tweets/search_form.html" %}
+    {% endif %}
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       {% if request.user.is_authenticated %}
       <ul class="nav navbar-nav navbar-right">
