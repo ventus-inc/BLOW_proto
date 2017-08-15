@@ -49,15 +49,15 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
     
     は
     
+    ```
     make migrations
-    
-
-
-    
     ```
+
+
+    
     python manage.py migrate
-    ```
     は
+    
     ```
     make migrate
     ```
