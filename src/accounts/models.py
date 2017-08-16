@@ -85,7 +85,6 @@ class WalletProfile(models.Model):
     def __str__(self):
         return self.num
 
-
 def post_save_user_receiver(sender, instance, created, *args, **kwargs):
     # print(instance)
     if created:
