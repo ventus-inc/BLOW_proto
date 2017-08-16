@@ -25,14 +25,16 @@ class UserRegisterView(FormView):
         password = form.cleaned_data.get("password")
         new_user = User.objects.create(username=username, email=email)
         new_user.set_password(password)
-        # new_user.profile.save()
+        new_user.save()
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
         # host='localhost' port=8545 は　geth のデフォルト値
 
         wallet_num = web3.personal.newAccount(username)
+        wallet = WalletProfile.objects.create(user=new_user)
         # new_user.wallet_num = wallet_num
-        new_user.wallet_num = wallet_num
-        print(new_user.wallet_num)
+        new_user.wallet.num = wallet_num
+        #print(new_user.wallet_num)
+        wallet.save()
         #new_user.wallet.save()
         new_user.save()
         return super(UserRegisterView, self).form_valid(form)

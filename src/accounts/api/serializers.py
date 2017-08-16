@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from rest_framework import serializers
-
+from accounts.models import WalletProfile
 User = get_user_model()
 
 class UserDisplaySerializer(serializers.ModelSerializer):
@@ -30,4 +30,5 @@ class UserDisplaySerializer(serializers.ModelSerializer):
         return reverse_lazy("profiles:detail", kwargs={"username": obj.username})
 
     def get_wallet_num(self, obj):
-        return hasattr(obj, 'wallet') and self.car is not None
+        wallet = WalletProfile.objects.get(user=obj)
+        return wallet.num

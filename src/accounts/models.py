@@ -76,14 +76,15 @@ class UserProfile(models.Model):
 class WalletProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        blank=True,
-        null=True,
+        primary_key=True,
         related_name='wallet')
-
-    wallet_num = models.CharField(
+    num = models.CharField(
         blank=True,
         null=True,
-        max_length=40, )
+        max_length=40,)
+
+    def __str__(self):
+        return self.num
 
 
 def post_save_user_receiver(sender, instance, created, *args, **kwargs):
