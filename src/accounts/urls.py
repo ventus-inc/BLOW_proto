@@ -4,6 +4,7 @@ from .views import (
     UserDetailView,
     UserFollowView,
     UserUpdateView,
+    UserProfileUpdateView,
     )
 
 urlpatterns = [
@@ -14,5 +15,6 @@ urlpatterns = [
     url(r'^(?P<username>[\w.@+-]+)/$', UserDetailView.as_view(), name='detail'),
     url(r'^(?P<username>[\w.@+-]+)/follow/$', UserFollowView.as_view(), name='follow'),
     url(r'^(?P<username>[\w.@+-]+)/update/$', UserUpdateView.as_view(), name='update'),
+    url(r'^(?P<username>[\w.@+-]+)/update_profile/$', UserProfileUpdateView.as_view(), name='update_profile'),
     # url(r'^(?P<pk>\d+)/delete/$', TweetDeleteView.as_view(), name='delete')
 ]

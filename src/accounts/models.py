@@ -49,11 +49,11 @@ class UserProfile(models.Model):
         settings.AUTH_USER_MODEL,
         blank=True,
         related_name='followed_by')
-    image = models.ImageField(upload_to='profile_image',blank=True)
+    image = models.ImageField(upload_to='profile_image', blank=True)
     objects = UserProfileManager()
 
     def __str__(self):
-        return str(self.following.all().count())
+        return str(self.user)
 
     def get_following(self):
         users = self.following.all()
@@ -65,8 +65,6 @@ class UserProfile(models.Model):
     def get_absolute_url(self):
         return reverse_lazy("profiles:detail", kwargs={"username":self.user.username})
 
-# hoge = User.objects.first()
-# User.objects.get_or_create()
 
 def post_save_user_receiver(sender, instance, created, *args, **kwargs):
     # print(instance)

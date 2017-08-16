@@ -2,12 +2,12 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.views.generic import DetailView
 from django.views import View
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, render_to_response
 from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse_lazy
 
 from .models import UserProfile
-from .forms import UserRegisterForm
+from .forms import UserRegisterForm, UserUpdateForm, UserProfileUpdateForm
 
 # Create your views here.
 
@@ -57,12 +57,7 @@ class UserFollowView(View):
 
 class UserUpdateView(UpdateView):
     template_name = 'accounts/user_update.html'
-    model = User
-    slug_field = 'username'
-    fields = ['first_name',
-              'last_name',
-              'email',
-              ]
+    form_class = UserUpdateForm
     success_url = reverse_lazy('home')
 
     def get_object(self):
@@ -75,3 +70,21 @@ class UserUpdateView(UpdateView):
         else:
             return obj
 
+class UserProfileUpdateView(UpdateView):
+    template_name = 'accounts/user_update.html'
+    form_class = UserProfileUpdateForm
+    success_url = reverse_lazy('home')
+
+    def get_object(self):
+        print(self.request.user)
+        print(self.kwargs.get("user"))
+        obj = get_object_or_404(
+                UserProfile,
+                user=self.request.user
+                )
+        print(obj)
+        print(obj.user == self.request.user)
+        if not obj.user == self.request.user:
+            raise PermissionDenied
+        else:
+            return obj
