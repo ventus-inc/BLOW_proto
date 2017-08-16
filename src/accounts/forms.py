@@ -28,3 +28,12 @@ class UserRegisterForm(forms.Form):
         if User.objects.filter(email__icontains=email).exists():
             raise forms.ValidationError("This email already exists")
         return email
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+        ]
