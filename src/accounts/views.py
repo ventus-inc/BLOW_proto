@@ -1,7 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
-# from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.forms import UserChangeForm
 from django.views.generic import DetailView
 from django.views import View
 from django.shortcuts import render, get_object_or_404, redirect
@@ -57,29 +55,6 @@ class UserFollowView(View):
         return redirect("profiles:detail", username=username)
 
 
-# class UserUpdateView(UpdateView):
-#     template_name = 'accounts/user_update.html'
-#     queryset = User.objects.all()
-#     slug_field = 'username'
-#     form_class = UserUpdateForm
-#     success_url = reverse_lazy('profiles:detail')
-
-#     def get_object(self):
-#         return get_object_or_404(
-#             User,
-#             username__iexact=self.kwargs.get("username")
-#             )
-
-#     def form_valid(self, form):
-#         username = form.cleaned_data.get("username")
-#         email = form.cleaned_data.get("email")
-#         password = form.cleaned_data.get("password")
-#         new_user = User.objects.create(username=username, email=email)
-#         new_user.set_password(password)
-#         new_user.save()
-#         return super(UserRegisterView, self).form_valid(form)
-
-
 class UserUpdateView(UpdateView):
     template_name = 'accounts/user_update.html'
     model = User
@@ -95,42 +70,8 @@ class UserUpdateView(UpdateView):
                 User,
                 username__iexact=self.kwargs.get("username")
                 )
-        print(obj.username)
-        print(self.request.user.username)
-        print(obj.username == self.request.user)
         if not obj.username == self.request.user.username:
             raise PermissionDenied
         else:
             return obj
 
-
-
-    # def form_valid(self, form):
-    #     print(self.model)
-    #     print(self.model.username)
-    #     print(self.model.first_name)
-    #     print("+++++++")
-    #     print(self.object.first_name)
-    #     print(self.object.last_name)
-    #     print("+++++++")
-    #     print()
-    #     username = form.cleaned_data.get("username")
-    #     email = form.cleaned_data.get("email")
-    #     password = form.cleaned_data.get("password")
-
-
-    #     new_user = User.objects.create(username=username, email=email)
-    #     new_user.set_password(password)
-    #     new_user.save()
-    #     return super(UserUpdateView, self).form_valid(form)
-
-# def user_update(request, username):
-#     if request.method == 'POST':
-#         form = UserChangeForm(request.POST, instance=request.user)
-#         if form.is_valid():
-#             form.save()
-#             return redirect("profiles:detail", username=username)
-#         else:
-#             form = UserChangeForm(instance=request.user)
-#             args = {'form':form}
-#             return render(request, 'accounts/user_update.html', args)
