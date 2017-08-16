@@ -5,17 +5,19 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.views.generic.edit import FormView
 
-from .models import UserProfile
+from web3 import Web3, KeepAliveRPCProvider
+from .models import UserProfile,WalletProfile
 from .forms import UserRegisterForm
 
 # Create your views here.
 
 User = get_user_model()
 
+
 class UserRegisterView(FormView):
     template_name = 'accounts/user_register_form.html'
     form_class = UserRegisterForm
-    success_url = '/login'
+    success_url = '/'
 
     def form_valid(self, form):
         username = form.cleaned_data.get("username")
@@ -24,7 +26,19 @@ class UserRegisterView(FormView):
         new_user = User.objects.create(username=username, email=email)
         new_user.set_password(password)
         new_user.save()
+        web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
+        # host='localhost' port=8545 は　geth のデフォルト値
+
+        wallet_num = web3.personal.newAccount(username)
+        wallet = WalletProfile.objects.create(user=new_user)
+        # new_user.wallet_num = wallet_num
+        new_user.wallet.num = wallet_num
+        #print(new_user.wallet_num)
+        wallet.save()
+        #new_user.wallet.save()
+        new_user.save()
         return super(UserRegisterView, self).form_valid(form)
+
 
 class UserDetailView(DetailView):
     template_name = 'accounts/user_detail.html'
@@ -35,7 +49,7 @@ class UserDetailView(DetailView):
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
-            )
+        )
 
     def get_context_data(self, *args, **kwargs):
         context = super(UserDetailView, self).get_context_data(*args, **kwargs)
@@ -45,6 +59,7 @@ class UserDetailView(DetailView):
         context['following'] = following
         context['recommended'] = UserProfile.objects.recommended(self.request.user)
         return context
+
 
 class UserFollowView(View):
     def get(self, request, username, *args, **kwargs):
