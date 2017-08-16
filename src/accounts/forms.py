@@ -30,6 +30,7 @@ class UserRegisterForm(forms.Form):
             raise forms.ValidationError("This email already exists")
         return email
 
+# 現状使用しない方針
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
