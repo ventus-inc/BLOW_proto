@@ -6,13 +6,13 @@ from django.http import HttpResponseRedirect
 from django.views.generic.edit import FormView
 
 from web3 import Web3, KeepAliveRPCProvider
-from .models import UserProfile
+from .models import UserProfile,WalletProfile
 from .forms import UserRegisterForm
-from wallets.models import WalletProfile
 
 # Create your views here.
 
 User = get_user_model()
+
 
 class UserRegisterView(FormView):
     template_name = 'accounts/user_register_form.html'
@@ -25,14 +25,18 @@ class UserRegisterView(FormView):
         password = form.cleaned_data.get("password")
         new_user = User.objects.create(username=username, email=email)
         new_user.set_password(password)
+        # new_user.profile.save()
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
-        #host='localhost' port=8545 は　geth のデフォルト値
-        wallet_num = web3.personal.newAccount(username)
-        new_user.profile.wallet_num = wallet_num
-        new_user.profile.save()
+        # host='localhost' port=8545 は　geth のデフォルト値
 
+        wallet_num = web3.personal.newAccount(username)
+        # new_user.wallet_num = wallet_num
+        new_user.wallet_num = wallet_num
+        print(new_user.wallet_num)
+        #new_user.wallet.save()
         new_user.save()
         return super(UserRegisterView, self).form_valid(form)
+
 
 class UserDetailView(DetailView):
     template_name = 'accounts/user_detail.html'
@@ -43,7 +47,7 @@ class UserDetailView(DetailView):
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
-            )
+        )
 
     def get_context_data(self, *args, **kwargs):
         context = super(UserDetailView, self).get_context_data(*args, **kwargs)
@@ -53,6 +57,7 @@ class UserDetailView(DetailView):
         context['following'] = following
         context['recommended'] = UserProfile.objects.recommended(self.request.user)
         return context
+
 
 class UserFollowView(View):
     def get(self, request, username, *args, **kwargs):

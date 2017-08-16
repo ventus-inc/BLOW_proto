@@ -13,7 +13,7 @@
     <div class='col-sm-3 col-xs-12'>
         <h1>{{ object.username }}</h1>
         <p>Followers: {{ object.followed_by.all.count }}</p>
-        <p>
+        <p>test{{ object.wallet.wallet_num }}
             <a class='btn btn-link' href='{{ object.profile.get_follow_url }}'>{% if following %} UnFollow {% else %} Follow {% endif %}
             </a>
         </p>

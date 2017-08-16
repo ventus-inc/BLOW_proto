@@ -30,4 +30,4 @@ class UserDisplaySerializer(serializers.ModelSerializer):
         return reverse_lazy("profiles:detail", kwargs={"username": obj.username})
 
     def get_wallet_num(self, obj):
-        return obj.profile.wallet
+        return hasattr(obj, 'wallet') and self.car is not None

@@ -2,11 +2,13 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.urls import reverse_lazy
-from wallets.models import WalletProfile
+
+
 # Create your models here.
 
 class UserProfileManager(models.Manager):
-    use_for_related_fields =True
+    use_for_related_fields = True
+
     def all(self):
         qs = self.get_queryset().all()
         try:
@@ -42,6 +44,7 @@ class UserProfileManager(models.Manager):
         qs = self.get_queryset().exclude(user__in=following).exclude(id=profile.id).order_by("?")[:limit_to]
         return qs
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -50,11 +53,6 @@ class UserProfile(models.Model):
         settings.AUTH_USER_MODEL,
         blank=True,
         related_name='followed_by')
-    wallet = models.OneToOneField(
-        WalletProfile,
-        blank=True,
-        null=True,
-        related_name='wallet')
 
     objects = UserProfileManager()
 
@@ -66,18 +64,32 @@ class UserProfile(models.Model):
         return users.exclude(username=self.user.username)
 
     def get_follow_url(self):
-        return reverse_lazy("profiles:follow", kwargs={"username":self.user.username})
+        return reverse_lazy("profiles:follow", kwargs={"username": self.user.username})
 
     def get_absolute_url(self):
-        return reverse_lazy("profiles:detail", kwargs={"username":self.user.username})
+        return reverse_lazy("profiles:detail", kwargs={"username": self.user.username})
+
 
 # hoge = User.objects.first()
 # User.objects.get_or_create()
+
+class WalletProfile(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        related_name='wallet')
+
+    wallet_num = models.CharField(
+        blank=True,
+        null=True,
+        max_length=40, )
+
 
 def post_save_user_receiver(sender, instance, created, *args, **kwargs):
     # print(instance)
     if created:
         new_profile = UserProfile.objects.get_or_create(user=instance)
 
-post_save.connect(post_save_user_receiver, sender=settings.AUTH_USER_MODEL)
 
+post_save.connect(post_save_user_receiver, sender=settings.AUTH_USER_MODEL)
