@@ -1,9 +1,10 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
+# from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserChangeForm
 from django.views.generic import DetailView
 from django.views import View
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseRedirect
 from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse_lazy
 
@@ -78,6 +79,7 @@ class UserFollowView(View):
 #         new_user.save()
 #         return super(UserRegisterView, self).form_valid(form)
 
+
 class UserUpdateView(UpdateView):
     template_name = 'accounts/user_update.html'
     model = User
@@ -89,10 +91,19 @@ class UserUpdateView(UpdateView):
     success_url = reverse_lazy('home')
 
     def get_object(self):
-        return get_object_or_404(
-            User,
-            username__iexact=self.kwargs.get("username")
-            )
+        obj = get_object_or_404(
+                User,
+                username__iexact=self.kwargs.get("username")
+                )
+        print(obj.username)
+        print(self.request.user.username)
+        print(obj.username == self.request.user)
+        if not obj.username == self.request.user.username:
+            raise PermissionDenied
+        else:
+            return obj
+
+
 
     # def form_valid(self, form):
     #     print(self.model)
