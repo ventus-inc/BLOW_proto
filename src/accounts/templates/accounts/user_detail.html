@@ -16,7 +16,7 @@
         <img src="{{ object.profile.image.url }}" width="240">
         {% endif %}
         <p>Followers: {{ object.followed_by.all.count }}</p>
-        <p>
+        <p>{{ user.wallet.num }}
             <a class='btn btn-link' href='{{ object.profile.get_follow_url }}'>{% if following %} UnFollow {% else %} Follow {% endif %}
             </a>
         </p>
