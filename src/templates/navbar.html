@@ -18,11 +18,12 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       {% if request.user.is_authenticated %}
       <ul class="nav navbar-nav navbar-right">
+        <!-- <li><img class="profile-image img-circle nav-profile" src="{{ request.user.profile.image.url }}" ></li> -->
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img class="profile-image img-circle nav-profile" src="{{ request.user.profile.image.url }}" > Account <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{{ request.user.profile.get_absolute_url }}">Profile</a></li>
-            <li><a href="#">Another action</a></li>
+            <li><a href="{{ request.user.profile.get_absolute_url }}update_profile">Edit Profile</a></li>
             <li><a href="#">Something else here</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{% url 'logout' %}">Logout</a></li>
