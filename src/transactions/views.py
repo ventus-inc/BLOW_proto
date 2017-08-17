@@ -10,29 +10,19 @@ User = get_user_model()
 class SendTransactionView(View):
     def post(self,request, *args, **kwargs):
         if request.method == 'POST':
+
             query = request.POST.get("value")
-            wallet = WalletProfile.objects.get(user=request.user)
-            print(wallet.num)
+            from_wallet = WalletProfile.objects.get(user=request.user)
+            to_user = request.POST.get("username")
+            to_user = User.objects.get(username=to_user)
+            to_wallet =  WalletProfile.objects.get(user=to_user)
+
+            print(from_wallet.num)
             print(request.user)
             print(query)
+
             web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
-            web3.personal.signAndSendTransaction(formatters.input_transaction_formatter(web3.eth, {'to': '0x458e7a9411dd0fea48fdccea2772a074677d4d2b', 'from': wallet.num, 'value': query}), 'aaa')
+            web3.personal.signAndSendTransaction(formatters.input_transaction_formatter(web3.eth, {'to': to_wallet.num, 'from': from_wallet.num, 'value': query}), request.user.username)
             return render(request, "home.html")
 
 
-
-
-
-
-
-class SearchView(View):
-    def get(self, request, *args, **kwargs):
-        # query = User.objects.all()
-        query = request.GET.get("q")
-        qs = None
-        if query:
-            qs = User.objects.filter(
-                    Q(username__icontains=query)
-                )
-        context = {"users": qs}
-        return render(request, "search.html", context)
