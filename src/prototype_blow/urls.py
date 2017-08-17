@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^api/tweet/', include('tweets.api.urls', namespace='tweet-api')),
     url(r'^api/', include('accounts.api.urls', namespace='profiles-api')),
     url(r'^register/$', UserRegisterView.as_view(), name='register'),
+    url(r'^transaction/', include('transactions.urls', namespace='transaction')),
 ]
 
 if settings.DEBUG:
