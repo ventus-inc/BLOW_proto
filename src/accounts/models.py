@@ -3,10 +3,12 @@ from django.db.models.signals import post_save
 from django.conf import settings
 from django.urls import reverse_lazy
 
+
 # Create your models here.
 
 class UserProfileManager(models.Manager):
-    use_for_related_fields =True
+    use_for_related_fields = True
+
     def all(self):
         qs = self.get_queryset().all()
         try:
@@ -41,6 +43,7 @@ class UserProfileManager(models.Manager):
         qs = self.get_queryset().exclude(user__in=following).exclude(id=profile.id).order_by("?")[:limit_to]
         return qs
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -60,17 +63,33 @@ class UserProfile(models.Model):
         return users.exclude(username=self.user.username)
 
     def get_follow_url(self):
-        return reverse_lazy("profiles:follow", kwargs={"username":self.user.username})
+        return reverse_lazy("profiles:follow", kwargs={"username": self.user.username})
 
     def get_absolute_url(self):
-        return reverse_lazy("profiles:detail", kwargs={"username":self.user.username})
+        return reverse_lazy("profiles:detail", kwargs={"username": self.user.username})
+
 
 # hoge = User.objects.first()
 # User.objects.get_or_create()
+
+class WalletProfile(models.Model):
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        primary_key=True,
+        related_name='wallet')
+    num = models.CharField(
+        blank=True,
+        null=True,
+        max_length=40,)
+
+    def __str__(self):
+        return self.num
 
 def post_save_user_receiver(sender, instance, created, *args, **kwargs):
     # print(instance)
     if created:
         new_profile = UserProfile.objects.get_or_create(user=instance)
+
 
 post_save.connect(post_save_user_receiver, sender=settings.AUTH_USER_MODEL)
