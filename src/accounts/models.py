@@ -73,6 +73,7 @@ class UserProfile(models.Model):
 # User.objects.get_or_create()
 
 class WalletProfile(models.Model):
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         primary_key=True,
