@@ -1,13 +1,15 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
 from django.views.generic import DetailView
 from django.views import View
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseRedirect
-from django.views.generic.edit import FormView
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic.edit import FormView, UpdateView
+from django.core.urlresolvers import reverse_lazy
 
 from web3 import Web3, KeepAliveRPCProvider
+
+from .forms import UserRegisterForm, UserUpdateForm, UserProfileUpdateForm
 from .models import UserProfile,WalletProfile
-from .forms import UserRegisterForm
 
 # Create your views here.
 
@@ -65,3 +67,35 @@ class UserFollowView(View):
         if request.user.is_authenticated():
             is_following = UserProfile.objects.toggle_follow(request.user, toggle_user)
         return redirect("profiles:detail", username=username)
+
+
+# 現状使用していない
+class UserUpdateView(UpdateView):
+    template_name = 'accounts/user_update.html'
+    form_class = UserUpdateForm
+    success_url = reverse_lazy('home')
+
+    def get_object(self):
+        obj = get_object_or_404(
+                User,
+                username__iexact=self.kwargs.get("username")
+                )
+        if not obj.username == self.request.user.username:
+            raise PermissionDenied
+        else:
+            return obj
+
+class UserProfileUpdateView(UpdateView):
+    template_name = 'accounts/user_update.html'
+    form_class = UserProfileUpdateForm
+    success_url = reverse_lazy('home')
+
+    def get_object(self):
+        obj = get_object_or_404(
+                UserProfile,
+                user=self.request.user
+                )
+        if not obj.user == self.request.user:
+            raise PermissionDenied
+        else:
+            return obj

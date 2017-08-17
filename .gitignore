@@ -141,3 +141,4 @@ blow/migrations
 #ignore package updates
 bin/
 src/*/migrations
+media_cdn/

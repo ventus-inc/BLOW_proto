@@ -52,11 +52,11 @@ class UserProfile(models.Model):
         settings.AUTH_USER_MODEL,
         blank=True,
         related_name='followed_by')
-
+    image = models.ImageField(upload_to='profile_image', blank=True)
     objects = UserProfileManager()
 
     def __str__(self):
-        return str(self.following.all().count())
+        return str(self.user)
 
     def get_following(self):
         users = self.following.all()
@@ -69,8 +69,6 @@ class UserProfile(models.Model):
         return reverse_lazy("profiles:detail", kwargs={"username": self.user.username})
 
 
-# hoge = User.objects.first()
-# User.objects.get_or_create()
 
 class WalletProfile(models.Model):
 
