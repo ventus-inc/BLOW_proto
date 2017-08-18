@@ -1,0 +1,15 @@
+body {
+    color: #000;
+}
+
+.nav-profile {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    height: 34px;
+    width: 30px;
+    border-radius: 50%;
+    position: relative;
+    top: -5px;
+    float: left;
+    left: -5px;
+}

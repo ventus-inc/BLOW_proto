@@ -9,6 +9,7 @@
 
     <!-- Bootstrap -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet">
     <!-- Latest compiled and minified CSS -->
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
 
@@ -184,10 +185,9 @@
                 var currentHtml = $(this).html()
                 var newText;
 
-                // 後ろのもので上書きされてしまう・・・
-
-                newText = currentHtml.replace(usernameRegex, "$1<a href='profiles/$2/'>@$2</a>")
-                newText = newText.replace(hashtagRegex, "$1<a href='/tags/$2/'>#$2</a>")
+                // ハードコードになってしまっているので、要修正
+                newText = currentHtml.replace(usernameRegex, "$1<a href='http://127.0.0.1:8000/profiles/$2/'>@$2</a>")
+                newText = newText.replace(hashtagRegex, "$1<a href='http://127.0.0.1:8000/tags/$2/'>#$2</a>")
                 $(this).html(newText)
 
             })

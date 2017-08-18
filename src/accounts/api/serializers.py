@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from rest_framework import serializers
-from accounts.models import WalletProfile
+from accounts.models import WalletProfile, UserProfile
 User = get_user_model()
 
 class UserDisplaySerializer(serializers.ModelSerializer):
@@ -20,11 +20,9 @@ class UserDisplaySerializer(serializers.ModelSerializer):
         ]
 
     def get_follower_count(self, obj):
-        #print(obj.username)
-        return 0
-
-    def get_follower_count(self, obj):
-        return 0
+        user = UserProfile.objects.get(user=obj)
+        # print(user.get_following().count())
+        return user.get_following().count()
 
     def get_url(self, obj):
         return reverse_lazy("profiles:detail", kwargs={"username": obj.username})
