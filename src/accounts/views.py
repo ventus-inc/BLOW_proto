@@ -44,8 +44,12 @@ class UserDetailView(DetailView):
     template_name = 'accounts/user_detail.html'
     queryset = User.objects.all()
     slug_field = 'username'
-
     def get_object(self):
+        web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
+        user = User.objects.get(username=self.kwargs.get("username"))
+        print(user.wallet)
+        user.wallet.balance = web3.eth.getBalance(user.wallet.num)
+        user.wallet.save()
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
@@ -84,6 +88,7 @@ class UserUpdateView(UpdateView):
             raise PermissionDenied
         else:
             return obj
+
 
 class UserProfileUpdateView(UpdateView):
     template_name = 'accounts/user_update.html'
