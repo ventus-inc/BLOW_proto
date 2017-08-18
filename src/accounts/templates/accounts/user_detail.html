@@ -17,6 +17,17 @@
         {% endif %}
         <p>Followers: {{ object.followed_by.all.count }}</p>
         <p>{{ user.wallet.num }}
+
+         <form id='send-form' class="navbar-form navbar-left" method='POST' action='{% url "transaction:send" %}'>
+            {% csrf_token %}
+            <div class="form-group">
+                <input class="form-control" type='hidden' name='username' value="{{ object }}"/>
+                <input class="form-control" type='text' name='value' placeholder='value' value="{{ request.POST.value }}"/>
+            </div>
+            <input class="btn btn-default" type='submit' value='value' />
+        </form>
+
+
             <a class='btn btn-link' href='{{ object.profile.get_follow_url }}'>{% if following %} UnFollow {% else %} Follow {% endif %}
             </a>
         </p>
