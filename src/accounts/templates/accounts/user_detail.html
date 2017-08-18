@@ -13,7 +13,7 @@
     <div class='col-sm-3 col-xs-12'>
         <h1>{{ object.username }}</h1>
         {% if object.profile.image %}
-        <img src="{{ object.profile.image.url }}" width="240">
+        <img class="img-rounded" src="{{ object.profile.image.url }}" width="240">
         {% endif %}
         <p>Followers: {{ object.followed_by.all.count }}</p>
         <p>{{ user.wallet.num }}

@@ -20,13 +20,13 @@ class UserRegisterForm(forms.Form):
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
-        if User.objects.filter(username__icontains=username).exists():
+        if User.objects.filter(username__iexact=username).exists():
             raise forms.ValidationError("This username is taken")
         return username
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if User.objects.filter(email__icontains=email).exists():
+        if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("This email already exists")
         return email
 
