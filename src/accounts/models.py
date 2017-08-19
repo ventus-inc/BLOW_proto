@@ -80,10 +80,10 @@ class WalletProfile(models.Model):
         blank=True,
         null=True,
         max_length=40,)
-    balance = models.CharField(
+    balance = models.BigIntegerField(
         default=0,
         null=False,
-        max_length=40,
+        max_length=20,
     )
     def __str__(self):
         return self.num
