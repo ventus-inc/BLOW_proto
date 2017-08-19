@@ -44,6 +44,7 @@ class UserDetailView(DetailView):
     template_name = 'accounts/user_detail.html'
     queryset = User.objects.all()
     slug_field = 'username'
+
     def get_object(self):
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
         user = User.objects.get(username=self.kwargs.get("username"))
@@ -65,7 +66,6 @@ class UserDetailView(DetailView):
         context['following'] = following
         context['recommended'] = UserProfile.objects.recommended(self.request.user)
         return context
-
 
 class UserFollowView(View):
     def get(self, request, username, *args, **kwargs):

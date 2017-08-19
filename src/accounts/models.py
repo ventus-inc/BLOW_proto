@@ -85,6 +85,7 @@ class WalletProfile(models.Model):
         null=False,
         max_length=20,
     )
+
     def __str__(self):
         return self.num
 
