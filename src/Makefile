@@ -22,6 +22,9 @@ migrations:
 migrate:
 	python manage.py migrate
 
+geth:
+	geth --rpc --rpcapi "personal,eth" --dev --networkid 123 console
+
 help:
 	@echo "    clean-pyc"
 	@echo "        Remove python artifacts."
