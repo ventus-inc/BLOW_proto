@@ -45,24 +45,18 @@ BLOWのプロジェクトソースコードです。（いったんは東大SFP�
     ```
 
 ## Makefile作りました
-    python manage.py makemigrations
-    
+* Migrationファイルを作る
+    ```python manage.py makemigrations```
     は
-    
-    make migrations
-
-
-    
-    python manage.py migrate
-    
+    ```make migrations```
+* Migrateする
+    ```python manage.py migrate```
     は
+    ```make migrate```
+* サーバーを始動する
+    ```python manage.py runserver```
+    は
+    ```make run```
     
-    make migrate
-    
-
-
-
-
-
-    python manage.py runserver
-    make run
+    ※　別ターミナルでgeth用サーバーを立てること
+    ```geth --rpc --rpcapi "personal,eth" --dev --networkid 123 console```
