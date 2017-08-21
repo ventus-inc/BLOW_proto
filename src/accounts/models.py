@@ -83,7 +83,6 @@ class WalletProfile(models.Model):
     balance = models.BigIntegerField(
         default=0,
         null=False,
-        max_length=20,
     )
 
     def __str__(self):

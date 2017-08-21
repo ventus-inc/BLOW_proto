@@ -45,13 +45,17 @@ class UserDetailView(DetailView):
     queryset = User.objects.all()
     slug_field = 'username'
 
-    def get_object(self):
+    def __calc_balance(usr):
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
-        user = User.objects.get(username=self.kwargs.get("username"))
+        user = User.objects.get(username=usr.kwargs.get("username"))
         print(user.wallet)
         user.wallet.balance = web3.eth.getBalance(user.wallet.num)/100000
-        #SQLiteのInteger型に入りきらないため、送金最低額を100000weiとしました
-        #Unsignedでも一桁足りない
+        user.wallet.save()
+        return 0
+
+    def get_object(self):
+        user = User.objects.get(username=self.kwargs.get("username"))
+        UserDetailView.__calc_balance(self)
         user.wallet.save()
         return get_object_or_404(
             User,
