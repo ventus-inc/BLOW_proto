@@ -9,53 +9,59 @@
 {% endblock script %}
 
 {% block content %}
-token view
-<!-- <div class='row'>
-    <div class='col-sm-3 col-xs-12'>
+<div class='row'>
+    <div class='col-md-8 col-md-offset-2'>
         <h1>{{ object.username }}</h1>
         {% if object.profile.image %}
         <img class="img-rounded" src="{{ object.profile.image.url }}" width="240">
         {% endif %}
         <p>Followers: {{ object.followed_by.all.count }}</p>
         <p>{{ user.wallet.balance }}:BLOW
-        <form id='send-form' class="navbar-form navbar-left" method='POST' action='{% url "transaction:send" %}'>
-            {% csrf_token %}
-            <div class="form-group">
-                <input class="form-control" type='hidden' name='username' value="{{ object }}"/>
-                <input class="form-control" type='text' name='value' placeholder='value' value="{{ request.POST.value }}"/>
-            </div>
-            <input class="btn btn-default" type='submit' value='value' />
-        </form>
-
-
             <a class='btn btn-link' href='{{ object.profile.get_follow_url }}'>{% if following %} UnFollow {% else %} Follow {% endif %}
             </a>
-            <a class='btn btn-link' href='{{ object.profile.get_follow_url }}'>BUY</a>
         </p>
         <hr/>
-        <h1>Following <small>{{ object.profile.get_following.count }}</small></h1>
-        {% for user in object.profile.get_following %}
-            <a href='../{{ user.username }}'>{{ user.username }}</a><br/>
-        {% empty %}
-        <h4>Not following any  users</h4>
-        {% endfor %}
 
+        <!-- valuソースコード参考 -->
+        <div id="hint_chart" data-url="https://valu.is/AJfpxgQUBrLGxSzJS5qdx55pKTkwVKN2L4/table">
+        <table>
+        <thead>
+        <tr><td class="r0">買気配値</td><td class="r1">買VA数</td><td class="r2">価格</td><td class="r3">売VA数</td><td class="r4">売気配値</td></tr>
+        </thead>
+        <tbody>
+            <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="https://valu.is/users/order/buy/ihayato?default_price=1.046249">1.046249</a></th><td class="r3">1</td><td class="r4"><p class="bar" style="width: 6.25%;"></p></td></tr>
+            <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="https://valu.is/users/order/buy/ihayato?default_price=1.04">1.04</a></th><td class="r3">2</td><td class="r4"><p class="bar" style="width: 12.5%;"></p></td></tr>
+            <tr class="buy"><td class="r0"><p class="bar" style="width: 100%;"></p></td><td class="r1">16</td><th class="r2"><a href="https://valu.is/users/order/sell/ihayato?default_price=0.0001">0.0001</a></th><td class="r3"></td><td class="r4"></td></tr>
+        </tbody>
+        </table>
+        </div>
         <hr/>
-        <h1>Followed By</h1>
-        {% for profile in object.followed_by.all %}
-            <a href="../{{ profile.user.username }}">{{ profile.user.username }}</a><br/>
-        {% empty %}
-        <h4>Not followed by any users</h4>
-        {% endfor %}
-
+        <form method="POST" action="https://valu.is/users/order/buy/ihayato" accept-charset="UTF-8"><input name="_method" type="hidden" value="PATCH"><input name="_token" type="hidden" value="JojU93JG7REdJeONqIr9Dd6puEfIpVRVuF2iBgCY">
+            <div class="buy_hope_amount">
+                <b>購入希望数</b>
+                <input name="asset_id" type="hidden" value="AJfpxgQUBrLGxSzJS5qdx55pKTkwVKN2L4">
+                <input class="buy_hope_amount" id="input_amount" name="assets_amount" type="number">
+                <p>BLO</p>
+            </div>  
+            <div class="buy_hope_amount" style="margin-top: 10px">
+                <b>購入希望単価</b>
+                                    <input class="buy_hope_amount" id="input_rate" name="btc_rate" type="text" value="0.63">
+                                    <p>ETH</p>
+            </div>
+                            <div class="ref_price">
+                <b>参考価格</b>
+                <em><span id="ref_price">---</span><small>JPY</small></em>
+            </div>
+                            <div class="go_confirmpage">
+                <input class="btn_go_confirm" type="submit" value="購入確認画面へ">
+            </div>
+            <div class="buy_sell_count">
+                <span>本日の残り取引回数</span>
+                <b>10</b>
+                <small>回</small>
+            </div>
+         </form>
+         <!-- valuソースコード参考〜ここまで〜 -->
     </div>
-    <div class='col-sm-9 col-xs-12'>
-        <h1>Tweets</h1>
-
-        <div id='tweet-container' data-url='/api/{{ object.username }}/tweet/'></div>
-        <a href='#' id='loadmore'>Load More</a>
-
-
-    </div>
-</div> -->
+</div>
 {% endblock content %}
