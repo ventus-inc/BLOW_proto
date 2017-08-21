@@ -56,7 +56,6 @@ class UserDetailView(DetailView):
     def get_object(self):
         user = User.objects.get(username=self.kwargs.get("username"))
         UserDetailView.__calc_balance(self)
-        user.wallet.save()
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
