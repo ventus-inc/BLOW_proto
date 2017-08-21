@@ -16,8 +16,7 @@
         <img class="img-rounded" src="{{ object.profile.image.url }}" width="240">
         {% endif %}
         <p>Followers: {{ object.followed_by.all.count }}</p>
-        <p>{{ user.wallet.num }}
-
+        <p>{{ user.wallet.balance }}:BLOW
          <form id='send-form' class="navbar-form navbar-left" method='POST' action='{% url "transaction:send" %}'>
             {% csrf_token %}
             <div class="form-group">

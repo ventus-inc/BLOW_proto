@@ -12,6 +12,9 @@ class SendTransactionView(View):
         if request.method == 'POST':
 
             query = request.POST.get("value")
+            value = int(query)*100000
+            #1Blowあたり10000weiとして送金します
+            print(value)
             from_wallet = WalletProfile.objects.get(user=request.user)
             to_user = request.POST.get("username")
             to_user = User.objects.get(username=to_user)
@@ -23,7 +26,7 @@ class SendTransactionView(View):
             print(query)
             '''
             web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
-            web3.personal.signAndSendTransaction(formatters.input_transaction_formatter(web3.eth, {'to': to_wallet.num, 'from': from_wallet.num, 'value': query}), request.user.username)
+            web3.personal.signAndSendTransaction(formatters.input_transaction_formatter(web3.eth, {'to': to_wallet.num, 'from': from_wallet.num, 'value': value}), request.user.username)
             return render(request, "home.html")
 
 

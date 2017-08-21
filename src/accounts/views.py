@@ -45,7 +45,17 @@ class UserDetailView(DetailView):
     queryset = User.objects.all()
     slug_field = 'username'
 
+    def __calc_balance(usr):
+        web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
+        user = User.objects.get(username=usr.kwargs.get("username"))
+        print(user.wallet)
+        user.wallet.balance = web3.eth.getBalance(user.wallet.num)/100000
+        user.wallet.save()
+        return 0
+
     def get_object(self):
+        user = User.objects.get(username=self.kwargs.get("username"))
+        UserDetailView.__calc_balance(self)
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
@@ -59,7 +69,6 @@ class UserDetailView(DetailView):
         context['following'] = following
         context['recommended'] = UserProfile.objects.recommended(self.request.user)
         return context
-
 
 class UserFollowView(View):
     def get(self, request, username, *args, **kwargs):
@@ -84,6 +93,7 @@ class UserUpdateView(UpdateView):
             raise PermissionDenied
         else:
             return obj
+
 
 class UserProfileUpdateView(UpdateView):
     template_name = 'accounts/user_update.html'
