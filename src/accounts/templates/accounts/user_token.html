@@ -9,7 +9,8 @@
 {% endblock script %}
 
 {% block content %}
-<div class='row'>
+token view
+<!-- <div class='row'>
     <div class='col-sm-3 col-xs-12'>
         <h1>{{ object.username }}</h1>
         {% if object.profile.image %}
@@ -29,8 +30,7 @@
 
             <a class='btn btn-link' href='{{ object.profile.get_follow_url }}'>{% if following %} UnFollow {% else %} Follow {% endif %}
             </a>
-            <!-- 編集中 -->
-            <a class='btn btn-link' href='{{ object.profile.get_token_url }}'>BUY</a>
+            <a class='btn btn-link' href='{{ object.profile.get_follow_url }}'>BUY</a>
         </p>
         <hr/>
         <h1>Following <small>{{ object.profile.get_following.count }}</small></h1>
@@ -57,5 +57,5 @@
 
 
     </div>
-</div>
+</div> -->
 {% endblock content %}
