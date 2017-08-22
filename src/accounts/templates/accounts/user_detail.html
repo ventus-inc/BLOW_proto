@@ -17,7 +17,7 @@
         {% endif %}
         <p>Followers: {{ object.followed_by.all.count }}</p>
         <p>{{ user.wallet.balance }}:BLOW
-         <form id='send-form' class="navbar-form navbar-left" method='POST' action='{% url "transaction:send" %}'>
+        <form id='send-form' class="navbar-form navbar-left" method='POST' action='{% url "transaction:send" %}'>
             {% csrf_token %}
             <div class="form-group">
                 <input class="form-control" type='hidden' name='username' value="{{ object }}"/>
@@ -29,6 +29,8 @@
 
             <a class='btn btn-link' href='{{ object.profile.get_follow_url }}'>{% if following %} UnFollow {% else %} Follow {% endif %}
             </a>
+            <!-- 編集中 -->
+            <a class='btn btn-link' href='{{ object.profile.get_token_url }}'>BUY</a>
         </p>
         <hr/>
         <h1>Following <small>{{ object.profile.get_following.count }}</small></h1>

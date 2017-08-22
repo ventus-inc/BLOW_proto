@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^search/$', SearchView.as_view(), name='search'),
     url(r'^tweet/', include('tweets.urls', namespace='tweet')),
     url(r'^profiles/', include('accounts.urls', namespace='profiles')),
+    url(r'^tokens/', include('tokens.urls', namespace='tokens')),
     url(r'^tags/(?P<hashtag>.*)/$', HashTagView.as_view(), name='hashtag'),
     url(r'^api/tags/(?P<hashtag>.*)/$', TagTweetAPIView.as_view(), name='tag-tweet-api'),
     url(r'^api/search/$', SearchTweetAPIView.as_view(), name='search-api'),
