@@ -22,24 +22,30 @@
         </p>
         <hr/>
 
-        <!-- valuソースコード参考 -->
-        <div id="hint_chart" data-url="https://valu.is/AJfpxgQUBrLGxSzJS5qdx55pKTkwVKN2L4/table">
+        <!-- ソースコード参考 -->
+        <div id="hint_chart" data-url="https://root/hogehoge/table">
         <table>
         <thead>
-        <tr><td class="r0">買気配値</td><td class="r1">買VA数</td><td class="r2">価格</td><td class="r3">売VA数</td><td class="r4">売気配値</td></tr>
+        <tr><td class="r0">買気配値</td><td class="r1">買BLO数</td><td class="r2">価格</td><td class="r3">売BLO数</td><td class="r4">売気配値</td></tr>
         </thead>
         <tbody>
-            <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="https://valu.is/users/order/buy/ihayato?default_price=1.046249">1.046249</a></th><td class="r3">1</td><td class="r4"><p class="bar" style="width: 6.25%;"></p></td></tr>
-            <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="https://valu.is/users/order/buy/ihayato?default_price=1.04">1.04</a></th><td class="r3">2</td><td class="r4"><p class="bar" style="width: 12.5%;"></p></td></tr>
-            <tr class="buy"><td class="r0"><p class="bar" style="width: 100%;"></p></td><td class="r1">16</td><th class="r2"><a href="https://valu.is/users/order/sell/ihayato?default_price=0.0001">0.0001</a></th><td class="r3"></td><td class="r4"></td></tr>
+            <!-- {{% for sale %}}で回す -->
+
+            <!-- <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="購入欄に数値設定するURL">{{ price }}</a></th><td class="r3">{{ salenumber }}</td><td class="r4"><p class="bar" style="width: {{ width }}%;"></p></td></tr> -->
+            <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="#">1.046249</a></th><td class="r3">1</td><td class="r4"><p class="bar" style="width: 6.25%;"></p></td></tr>
+
+            <!-- ここも{{% for buy %}}で回す -->
+            <tr class="buy"><td class="r0"><p class="bar" style="width: 100%;"></p></td><td class="r1">16</td><th class="r2"><a href="#">0.0001</a></th><td class="r3"></td><td class="r4"></td></tr>
         </tbody>
         </table>
         </div>
         <hr/>
-        <form method="POST" action="https://valu.is/users/order/buy/ihayato" accept-charset="UTF-8"><input name="_method" type="hidden" value="PATCH"><input name="_token" type="hidden" value="JojU93JG7REdJeONqIr9Dd6puEfIpVRVuF2iBgCY">
+        <!-- hogehogeはtokenidかな -->
+        <form method="POST" action="https://blow/users/order/buy/username" accept-charset="UTF-8"><input name="_method" type="hidden" value="PATCH"><input name="_token" type="hidden" value="hogehogehoge">
             <div class="buy_hope_amount">
                 <b>購入希望数</b>
-                <input name="asset_id" type="hidden" value="AJfpxgQUBrLGxSzJS5qdx55pKTkwVKN2L4">
+                <!-- hagehagehage = assetid? -->
+                <input name="asset_id" type="hidden" value="hagehagehage">
                 <input class="buy_hope_amount" id="input_amount" name="assets_amount" type="number">
                 <p>BLO</p>
             </div>  
@@ -50,6 +56,7 @@
             </div>
                             <div class="ref_price">
                 <b>参考価格</b>
+                <!-- <em><span id="ref_price">{% if price %}{{price}}{% else %}-{% endif %}</span><small>JPY</small></em> -->
                 <em><span id="ref_price">---</span><small>JPY</small></em>
             </div>
                             <div class="go_confirmpage">
@@ -61,7 +68,7 @@
                 <small>回</small>
             </div>
          </form>
-         <!-- valuソースコード参考〜ここまで〜 -->
+         <!-- ソースコード参考〜ここまで〜 -->
     </div>
 </div>
 {% endblock content %}
