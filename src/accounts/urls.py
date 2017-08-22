@@ -5,7 +5,6 @@ from .views import (
     UserFollowView,
     UserUpdateView,
     UserProfileUpdateView,
-    # UserTokenView
     )
 
 urlpatterns = [
@@ -18,7 +17,5 @@ urlpatterns = [
     # 現状使用していない
     url(r'^(?P<username>[\w.@+-]+)/update/$', UserUpdateView.as_view(), name='update'),
     url(r'^(?P<username>[\w.@+-]+)/update_profile/$', UserProfileUpdateView.as_view(), name='update_profile'),
-    # url(r'^(?P<username>[\w.@+-]+)/token/$', UserTokenView.as_view(), name='token'),
-    
     # url(r'^(?P<pk>\d+)/delete/$', TweetDeleteView.as_view(), name='delete')
 ]
