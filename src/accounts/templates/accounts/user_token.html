@@ -29,12 +29,12 @@
         <tr><td class="r0">買気配値</td><td class="r1">買BLO数</td><td class="r2">価格</td><td class="r3">売BLO数</td><td class="r4">売気配値</td></tr>
         </thead>
         <tbody>
-            <!-- {{% for sale %}}で回す -->
+            <!-- template loopで回す -->
 
             <!-- <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="購入欄に数値設定するURL">{{ price }}</a></th><td class="r3">{{ salenumber }}</td><td class="r4"><p class="bar" style="width: {{ width }}%;"></p></td></tr> -->
             <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="#">1.046249</a></th><td class="r3">1</td><td class="r4"><p class="bar" style="width: 6.25%;"></p></td></tr>
 
-            <!-- ここも{{% for buy %}}で回す -->
+            <!-- ここもtemplate loopで回す -->
             <tr class="buy"><td class="r0"><p class="bar" style="width: 100%;"></p></td><td class="r1">16</td><th class="r2"><a href="#">0.0001</a></th><td class="r3"></td><td class="r4"></td></tr>
         </tbody>
         </table>
@@ -51,8 +51,9 @@
             </div>  
             <div class="buy_hope_amount" style="margin-top: 10px">
                 <b>購入希望単価</b>
-                                    <input class="buy_hope_amount" id="input_rate" name="btc_rate" type="text" value="0.63">
-                                    <p>ETH</p>
+                <!-- 以下valueも変数で与える -->
+                <input class="buy_hope_amount" id="input_rate" name="btc_rate" type="text" value="0.63">
+                <p>ETH</p>
             </div>
                             <div class="ref_price">
                 <b>参考価格</b>
