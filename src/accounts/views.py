@@ -111,13 +111,13 @@ class UserProfileUpdateView(UpdateView):
             return obj
 
 
-class UserTokenView(DetailView):
-    template_name = 'accounts/user_token.html'
+# class UserTokenView(DetailView):
+#     template_name = 'accounts/user_token.html'
 
-    def get_object(self):
-        user = User.objects.get(username=self.kwargs.get("username"))
-        return get_object_or_404(
-            User,
-            username__iexact=self.kwargs.get("username")
-        )
+#     def get_object(self):
+#         user = User.objects.get(username=self.kwargs.get("username"))
+#         return get_object_or_404(
+#             User,
+#             username__iexact=self.kwargs.get("username")
+#         )
 

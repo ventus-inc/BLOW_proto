@@ -69,7 +69,7 @@ class UserProfile(models.Model):
         return reverse_lazy("profiles:detail", kwargs={"username": self.user.username})
 
     def get_token_url(self):
-        return reverse_lazy("profiles:token", kwargs={"username": self.user.username})
+        return reverse_lazy("tokens:token", kwargs={"username": self.user.username})
 
 
 

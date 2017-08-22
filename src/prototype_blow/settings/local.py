@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'tweets',
     'hashtags',
     'transactions',
+    'tokens',
 ]
 
 MIDDLEWARE = [

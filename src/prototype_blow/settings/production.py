@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'accounts',
     'hashtags',
     'transactions',
+    'tokens',
 ]
 
 MIDDLEWARE = [
