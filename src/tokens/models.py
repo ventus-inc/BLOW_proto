@@ -1,3 +1,28 @@
 from django.db import models
 
 # Create your models here.
+
+class TokenBoard(models.Model):
+	master 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
+	price_now 	= models.FloatField(null=True, blank=True, default=None)
+	timestamp   = models.DateTimeField(auto_now_add=True)
+
+class Token(models.Model):
+	token_board 	= models.ForeignKey(TokenBoard)
+	owner			= models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
+	latest_price 	= models.FloatField(null=True, blank=True, default=None)
+	updated     	= models.DateTimeField(auto_now=True)
+    timestamp   	= models.DateTimeField(auto_now_add=True)
+
+class BuyOrders(models.Model):
+	buyer 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
+	price 		= models.FloatField(null=True, blank=True, default=None)
+	token_board = models.ForeignKey(TokenBoard)
+	lot			= models.IntegerField()
+	timestamp   = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return str(self.buyer)
+
+	class Meta:
+		ordering = ('price',)
