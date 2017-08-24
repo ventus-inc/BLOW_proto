@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 
@@ -11,8 +12,8 @@ class Token(models.Model):
 	token_board 	= models.ForeignKey(TokenBoard)
 	owner			= models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
 	latest_price 	= models.FloatField(null=True, blank=True, default=None)
-	updated     	= models.DateTimeField(auto_now=True)
-    timestamp   	= models.DateTimeField(auto_now_add=True)
+	updated			= models.DateTimeField(auto_now=True)
+	timestamp		= models.DateTimeField(auto_now_add=True)
 
 class BuyOrders(models.Model):
 	buyer 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=1)

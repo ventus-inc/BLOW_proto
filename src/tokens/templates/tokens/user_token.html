@@ -41,18 +41,18 @@
         </div>
         <hr/>
         <!-- hogehogeはtokenidかな -->
-        <form method="POST" action="https://blow.com/users/order/buy/username" accept-charset="UTF-8"><input name="_method" type="hidden" value="PATCH"><input name="_token" type="hidden" value="hogehogehoge">
+        <form method="POST" action='{% url "tokens:buy" %}' accept-charset="UTF-8">
+        {% csrf_token %}
             <div class="buy_hope_amount">
                 <b>購入希望数</b>
-                <!-- hagehagehage = assetid? -->
-                <input name="asset_id" type="hidden" value="hagehagehage">
-                <input class="buy_hope_amount" id="input_amount" name="assets_amount" type="number">
+                <input class="form-control" type='hidden' name='username' value="{{ object }}"/>
+                <input class="form-control buy_hope_amount" id="input_amount" name="assets_amount" type="number" value="{{ request.POST.lot }}" placeholder='購入希望数'>
                 <p>BLO</p>
             </div>  
             <div class="buy_hope_amount" style="margin-top: 10px">
                 <b>購入希望単価</b>
                 <!-- 以下valueも変数で与える -->
-                <input class="buy_hope_amount" id="input_rate" name="btc_rate" type="text" value="0.63">
+                <input class="form-control buy_hope_amount" id="input_rate" name="btc_rate" type="number" value="{{ request.POST.value }}" placeholder='購入希望単価'>
                 <p>ETH</p>
             </div>
                             <div class="ref_price">
@@ -60,8 +60,8 @@
                 <!-- <em><span id="ref_price">{% if price %}{{price}}{% else %}-{% endif %}</span><small>JPY</small></em> -->
                 <em><span id="ref_price">---</span><small>JPY</small></em>
             </div>
-                            <div class="go_confirmpage">
-                <input class="btn_go_confirm" type="submit" value="購入確認画面へ">
+                <div class="go_confirmpage">
+                <input class="btn btn-primary btn_go_confirm" type="submit" value="購入確認画面へ">
             </div>
             <div class="buy_sell_count">
                 <span>本日の残り取引回数</span>
