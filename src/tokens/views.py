@@ -6,6 +6,8 @@ from django.views.generic import (
 	DetailView)
 from django.shortcuts import get_object_or_404, redirect
 
+from .models import BuyOrders
+
 User = get_user_model()
 
 # Create your views here.
@@ -22,10 +24,16 @@ class UserTokenView(DetailView):
 
 class BuyTokenView(LoginRequiredMixin, View):
 	def post(self, request, *args, **kwargs):
-		if request.method == 'POST':
+		if request.method == 'POST' and request.user.is_authenticated():
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
-
+			obj = BuyOrders(
+				buyer = request.user,
+				price = price,
+				lot = lot
+				)
+			obj.save()
+			print(request.user)
 			print(lot)
 			print(price)
 			# return render(request, "home.html")
