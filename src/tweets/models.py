@@ -80,7 +80,7 @@ class Tweet(models.Model):
             the_parent = self.parent
         return the_parent
 
-    def  get_children(self):
+    def get_children(self):
         parent = self.get_parent()
         qs = Tweet.objects.filter(parent=parent)
         qs_parent = Tweet.objects.filter(pk=parent.pk)

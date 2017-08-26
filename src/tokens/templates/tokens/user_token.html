@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block script %}
-<script>
+<!-- <script>
     $(document).ready(function(){
         loadTweetContainer("tweet-container")
     });
-</script>
+</script> -->
 {% endblock script %}
 
 {% block content %}
@@ -23,7 +23,7 @@
         <hr/>
 
         <!-- ソースコード参考 -->
-        <div id="hint_chart" data-url="https://blow.com/hogehoge/table">
+        <div id="hint_chart">
         <table>
         <thead>
         <tr><td class="r0">買気配値</td><td class="r1">買BLO数</td><td class="r2">価格</td><td class="r3">売BLO数</td><td class="r4">売気配値</td></tr>
@@ -35,24 +35,26 @@
             <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="#">1.046249</a></th><td class="r3">1</td><td class="r4"><p class="bar" style="width: 6.25%;"></p></td></tr>
 
             <!-- ここもtemplate loopで回す -->
-            <tr class="buy"><td class="r0"><p class="bar" style="width: 100%;"></p></td><td class="r1">16</td><th class="r2"><a href="#">0.0001</a></th><td class="r3"></td><td class="r4"></td></tr>
+            {% for buy in buys %}
+            <tr class="buy"><td class="r0"><p class="bar" style="width: 100%;"></p></td><td class="r1">{{ buy.lot }}</td><th class="r2"><a href="#">{{ buy.price }}</a></th><td class="r3"></td><td class="r4"></td></tr>
+            {% endfor %}
         </tbody>
         </table>
         </div>
         <hr/>
         <!-- hogehogeはtokenidかな -->
-        <form method="POST" action="https://blow.com/users/order/buy/username" accept-charset="UTF-8"><input name="_method" type="hidden" value="PATCH"><input name="_token" type="hidden" value="hogehogehoge">
-            <div class="buy_hope_amount">
+        <form method="POST" action='{% url "tokens:buy" username=object.username %}'>
+            {% csrf_token %}
+            <div class="form-group">
                 <b>購入希望数</b>
-                <!-- hagehagehage = assetid? -->
-                <input name="asset_id" type="hidden" value="hagehagehage">
-                <input class="buy_hope_amount" id="input_amount" name="assets_amount" type="number">
+                <input class="form-control" type='hidden' name='username' value="{{ object }}"/>
+                <input class="form-control" id="input_amount" name="lot" type="number" value="{{ request.POST.lot }}" placeholder='購入希望数'>
                 <p>BLO</p>
             </div>  
-            <div class="buy_hope_amount" style="margin-top: 10px">
+            <div class="form-group" style="margin-top: 10px">
                 <b>購入希望単価</b>
                 <!-- 以下valueも変数で与える -->
-                <input class="buy_hope_amount" id="input_rate" name="btc_rate" type="text" value="0.63">
+                <input class="form-control" id="input_rate" name="value" type="float" value="{{ request.POST.value }}" placeholder='購入希望単価'>
                 <p>ETH</p>
             </div>
                             <div class="ref_price">
@@ -60,8 +62,8 @@
                 <!-- <em><span id="ref_price">{% if price %}{{price}}{% else %}-{% endif %}</span><small>JPY</small></em> -->
                 <em><span id="ref_price">---</span><small>JPY</small></em>
             </div>
-                            <div class="go_confirmpage">
-                <input class="btn_go_confirm" type="submit" value="購入確認画面へ">
+                <div class="go_confirmpage">
+                <input class="btn btn-primary btn_go_confirm" type="submit" value="購入確認画面へ">
             </div>
             <div class="buy_sell_count">
                 <span>本日の残り取引回数</span>
