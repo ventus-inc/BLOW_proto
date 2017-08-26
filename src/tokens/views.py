@@ -20,8 +20,7 @@ class UserTokenView(DetailView):
     	context = super(UserTokenView, self).get_context_data(**kwargs)
     	user = User.objects.get(username=self.kwargs.get("username"))
     	context['user'] = user
-    	context['buys'] = BuyOrder.objects.filter(master=user).order_by('-price')
-    	context['total_buys'] = self._sum_lot(context['buys'])
+    	context['total_buys'] = BuyOrder.objects.get_summed_lot(user)
     	return context
 
     def get_object(self):
@@ -30,34 +29,6 @@ class UserTokenView(DetailView):
             User,
             username__iexact=self.kwargs.get("username")
         )
-
-    def _sum_lot(self, buys):
-    	total_buys = []
-    	previous_price = None
-    	obj = BuyOrder()
-    	for i in buys:
-    		if not previous_price:
-    			obj = BuyOrder(
-					master = i.master,
-					buyer = i.buyer,
-					price = i.price,
-					lot = i.lot,
-    				)
-    		else:
-	    		if not previous_price == i.price:
-	    			total_buys.append(obj)
-	    			obj = BuyOrder(
-						master = i.master,
-						buyer = i.buyer,
-						price = i.price,
-						lot = i.lot,
-	    				)
-	    		else:
-	    			obj.lot += i.lot
-    		previous_price = i.price
-    	total_buys.append(obj)
-    	return total_buys
-
 
 class BuyTokenView(LoginRequiredMixin, View):
 	def post(self, request, *args, **kwargs):
@@ -72,10 +43,6 @@ class BuyTokenView(LoginRequiredMixin, View):
 				lot = lot,
 				)
 			obj.save()
-			print(request.user)
-			print(lot)
-			print(price)
-			# return render(request, "home.html")
 			return redirect("home")
 
 	def get_object(self):
