@@ -19,10 +19,11 @@ class Token(models.Model):
 	updated			= models.DateTimeField(auto_now=True)
 	timestamp		= models.DateTimeField(auto_now_add=True)
 
-class BuyOrders(models.Model):
+class BuyOrder(models.Model):
 	"""注文
 	"""
-	buyer 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
+	master 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='master')
+	buyer 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='buyer')
 	price 		= models.FloatField(null=True, blank=True, default=None)
 	token_board = models.ForeignKey(TokenBoard, blank=True, null=True)
 	lot			= models.IntegerField(default=0)

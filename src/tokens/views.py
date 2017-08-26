@@ -5,8 +5,9 @@ from django.views import View
 from django.views.generic import (
 	DetailView)
 from django.shortcuts import get_object_or_404, redirect
+from datetime import datetime
 
-from .models import BuyOrders
+from .models import BuyOrder
 
 User = get_user_model()
 
@@ -14,6 +15,15 @@ User = get_user_model()
 
 class UserTokenView(DetailView):
     template_name = 'tokens/user_token.html'
+
+    def get_context_data(self, **kwargs):
+    	context = super(UserTokenView, self).get_context_data(**kwargs)
+    	user = User.objects.get(username=self.kwargs.get("username"))
+    	context['user'] = user
+    	context['buys'] = BuyOrder.objects.filter(master=user)
+    	print(context['user'])
+    	print(context['buys'])
+    	return context
 
     def get_object(self):
         user = User.objects.get(username=self.kwargs.get("username"))
@@ -27,10 +37,10 @@ class BuyTokenView(LoginRequiredMixin, View):
 		if request.method == 'POST' and request.user.is_authenticated():
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
-			obj = BuyOrders(
+			obj = BuyOrder(
 				buyer = request.user,
 				price = price,
-				lot = lot
+				lot = lot,
 				)
 			obj.save()
 			print(request.user)
