@@ -19,8 +19,7 @@ class UserTokenView(DetailView):
     def get_context_data(self, **kwargs):
     	context = super(UserTokenView, self).get_context_data(**kwargs)
     	user = User.objects.get(username=self.kwargs.get("username"))
-    	context['user'] = user
-    	context['total_buys'] = BuyOrder.objects.get_summed_lot(user)
+    	context['buys'] = BuyOrder.objects.get_summed_lot(user)
     	return context
 
     def get_object(self):

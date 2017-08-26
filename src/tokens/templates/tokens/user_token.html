@@ -35,7 +35,7 @@
             <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="#">1.046249</a></th><td class="r3">1</td><td class="r4"><p class="bar" style="width: 6.25%;"></p></td></tr>
 
             <!-- ここもtemplate loopで回す -->
-            {% for buy in total_buys %}
+            {% for buy in buys %}
             <tr class="buy"><td class="r0"><p class="bar" style="width: 100%;"></p></td><td class="r1">{{ buy.lot }}</td><th class="r2"><a href="#">{{ buy.price }}</a></th><td class="r3"></td><td class="r4"></td></tr>
             {% endfor %}
         </tbody>
