@@ -22,15 +22,16 @@ class Token(models.Model):
 class BuyOrder(models.Model):
 	"""注文
 	"""
-	master 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='master')
-	buyer 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='buyer')
+	master 		= models.ForeignKey(settings.AUTH_USER_MODEL, related_name='master')
+	buyer 		= models.ForeignKey(settings.AUTH_USER_MODEL, related_name='buyer')
 	price 		= models.FloatField(null=True, blank=True, default=None)
 	token_board = models.ForeignKey(TokenBoard, blank=True, null=True)
 	lot			= models.IntegerField(default=0)
 	timestamp   = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
-		return str(self.master)
+		message = 'order_by:'+ str(self.master) + '\n at:'+ str(self.timestamp)
+		return str(message)
 
 	class Meta:
 		ordering = ('price',)
