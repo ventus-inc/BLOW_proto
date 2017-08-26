@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.views import View
 from django.views.generic import (
 	DetailView)
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 
 User = get_user_model()
 
@@ -25,9 +25,11 @@ class BuyTokenView(LoginRequiredMixin, View):
 		if request.method == 'POST':
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
+
 			print(lot)
 			print(price)
-		return render(request, "home.html")
+			# return render(request, "home.html")
+			return redirect("home")
 
 	def get_object(self):
 		user = User.objects.get(username=self.kwargs.get("username"))
