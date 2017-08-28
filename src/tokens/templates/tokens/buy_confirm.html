@@ -1,30 +1,20 @@
 {% extends "base.html" %}
 
-{% block script %}
-<!-- <script>
-    $(document).ready(function(){
-        loadTweetContainer("tweet-container")
-    });
-</script> -->
-{% endblock script %}
-
 {% block content %}
 <div class='row'>
     <div class='col-md-8 col-md-offset-2'>
-        <!-- hogehogeはtokenidかな -->
         <p>{{master}}のトークンを以下の条件で購入します</p>
         <form method="POST" action='{% url "tokens:buy_confirm" username=master %}'>
             {% csrf_token %}
             <div class="form-group">
                 <b>購入希望数</b>
                 <input class="form-control" type='hidden' name='username' value="{{ object }}"/>
-                <input class="form-control" id="input_amount" name="lot" type="number" placeholder='{{lot}}'>
+                <input class="form-control" id="input_amount" name="lot" type="number" value="{{lot}}" placeholder='{{lot}}'>
                 <p>BLO</p>
             </div>  
             <div class="form-group" style="margin-top: 10px">
                 <b>購入希望単価</b>
-                <!-- 以下valueも変数で与える -->
-                <input class="form-control" id="buy_price" name="value" type="float" placeholder='{{price}}'>
+                <input class="form-control" id="buy_price" name="value" type="float" value="{{price}}" placeholder='{{price}}'>
                 <p>ETH</p>
             </div>
             <div class="form-group">
@@ -39,13 +29,7 @@
             <div class="go_confirmpage">
                 <input class="btn btn-primary btn_go_confirm" type="submit" value="購入">
             </div>
-            <div class="buy_sell_count">
-                <span>本日の残り取引回数</span>
-                <b>10</b>
-                <small>回</small>
-            </div>
          </form>
-         <!-- ソースコード参考〜ここまで〜 -->
     </div>
 </div>
 {% endblock content %}

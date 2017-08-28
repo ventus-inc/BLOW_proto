@@ -43,12 +43,6 @@ class BuyTokenView(LoginRequiredMixin, View):
 			}
 			return render(request, "tokens/buy_confirm.html", context=context)
 
-	def get_object(self):
-		user = User.objects.get(username=self.kwargs.get("username"))
-		return get_object_or_404(
-		    User,
-		    username__iexact=self.kwargs.get("username")
-		)
 
 class BuyTokenConfirmView(LoginRequiredMixin, View):
 	def post(self, request, *args, **kwargs):
@@ -66,10 +60,3 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
 				)
 			obj.save()
 			return redirect("home")
-
-	def get_object(self):
-		user = User.objects.get(username=self.kwargs.get("username"))
-		return get_object_or_404(
-		    User,
-		    username__iexact=self.kwargs.get("username")
-		)
