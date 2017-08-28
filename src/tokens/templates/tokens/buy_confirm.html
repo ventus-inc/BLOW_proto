@@ -9,12 +9,12 @@
             <div class="form-group">
                 <b>購入希望数</b>
                 <input class="form-control" type='hidden' name='username' value="{{ object }}"/>
-                <input class="form-control" id="input_amount" name="lot" type="number" value="{{lot}}" placeholder='{{lot}}'>
+                <input class="form-control" id="input_amount" name="lot" type="number" value="{{lot}}" placeholder='{{lot}}' required />
                 <p>BLO</p>
             </div>  
             <div class="form-group" style="margin-top: 10px">
                 <b>購入希望単価</b>
-                <input class="form-control" id="buy_price" name="value" type="float" value="{{price}}" placeholder='{{price}}'>
+                <input class="form-control" id="buy_price" name="value" type="float" value="{{price}}" placeholder='{{price}}' required />
                 <p>ETH</p>
             </div>
             <div class="form-group">

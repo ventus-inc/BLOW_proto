@@ -32,6 +32,8 @@ class UserTokenView(DetailView):
 
 # TODO: BuyTokenView, BuyTokenConfirmView をformsで書き換え
 class BuyTokenView(LoginRequiredMixin, View):
+	"""Token購入するView。売買板の表示と、BuyTokenConfirmViewへの遷移をする
+	"""
 	def post(self, request, *args, **kwargs):
 		if request.method == 'POST' and request.user.is_authenticated():
 			master = User.objects.get(username=self.kwargs.get("username"))
@@ -47,6 +49,8 @@ class BuyTokenView(LoginRequiredMixin, View):
 
 
 class BuyTokenConfirmView(LoginRequiredMixin, View):
+	"""Token購入の確認をするView
+	"""
 	def post(self, request, *args, **kwargs):
 		if request.method == 'POST' and request.user.is_authenticated():
 			master = User.objects.get(username=self.kwargs.get("username"))
