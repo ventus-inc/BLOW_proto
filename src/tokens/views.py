@@ -50,8 +50,8 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
 			master = User.objects.get(username=self.kwargs.get("username"))
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
+			# TODO: password validationとpasswordを用いたトークン発行transaction fire
 			password = request.POST.get("password")
-			print(password)
 			obj = BuyOrder(
 				master = master,
 				buyer = request.user,
