@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import View
@@ -71,3 +72,24 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
 				return redirect("home")
 			else:
 				return HttpResponse("Password Incorrect")
+
+class MyAssetTokensView(LoginRequiredMixin, DetailView):
+	"""保持しているTokenの情報を表示するページ
+	"""
+	template_name = 'tokens/asset_token.html'
+	def get_object(self):
+		user = User.objects.get(username=self.kwargs.get("username"))
+		return get_object_or_404(
+			User,
+			username__iexact=self.kwargs.get("username")
+		)
+
+	def get_context_data(self, *args, **kwargs):
+		context = super(MyAssetTokensView, self).get_context_data(*args, **kwargs)
+		requested_user = User.objects.get(username=self.kwargs.get("username"))
+		requesting_user = self.request.user
+		if not requested_user == requesting_user:
+			raise PermissionDenied
+		context['user'] = requested_user
+		return context
+

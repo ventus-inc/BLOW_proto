@@ -13,9 +13,12 @@ class TokenBoard(models.Model):
 class Token(models.Model):
 	"""持っているtoken
 	"""
-	token_board 	= models.ForeignKey(TokenBoard)
-	owner			= models.ForeignKey(settings.AUTH_USER_MODEL, default=None)
+	token_board 	= models.ForeignKey(TokenBoard, null=True, blank=True) # 暫定的にblank=True
+	publisher 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=None, related_name='publisher')
+	buyer 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=None, related_name='owner')
+	bought_price 	= models.FloatField(null=True, blank=True, default=None)
 	latest_price 	= models.FloatField(null=True, blank=True, default=None)
+	lot				= models.IntegerField(default=0)
 	updated			= models.DateTimeField(auto_now=True)
 	timestamp		= models.DateTimeField(auto_now_add=True)
 
