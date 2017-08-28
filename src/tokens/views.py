@@ -35,6 +35,29 @@ class BuyTokenView(LoginRequiredMixin, View):
 			master = User.objects.get(username=self.kwargs.get("username"))
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
+			context = {
+				'master': master,
+				'buyer': request.user,
+				'price': price,
+				'lot': lot,
+			}
+			return render(request, "tokens/buy_confirm.html", context=context)
+
+	def get_object(self):
+		user = User.objects.get(username=self.kwargs.get("username"))
+		return get_object_or_404(
+		    User,
+		    username__iexact=self.kwargs.get("username")
+		)
+
+class BuyTokenConfirmView(LoginRequiredMixin, View):
+	def post(self, request, *args, **kwargs):
+		if request.method == 'POST' and request.user.is_authenticated():
+			master = User.objects.get(username=self.kwargs.get("username"))
+			lot = request.POST.get("lot")
+			price = request.POST.get("value")
+			password = request.POST.get("password")
+			print(password)
 			obj = BuyOrder(
 				master = master,
 				buyer = request.user,
