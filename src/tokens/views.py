@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
+from django.http import HttpResponse
 from django.views import View
 from django.views.generic import (
 	DetailView)
@@ -29,6 +30,7 @@ class UserTokenView(DetailView):
             username__iexact=self.kwargs.get("username")
         )
 
+# TODO: BuyTokenView, BuyTokenConfirmView をformsで書き換え
 class BuyTokenView(LoginRequiredMixin, View):
 	def post(self, request, *args, **kwargs):
 		if request.method == 'POST' and request.user.is_authenticated():
@@ -50,13 +52,17 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
 			master = User.objects.get(username=self.kwargs.get("username"))
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
-			# TODO: password validationとpasswordを用いたトークン発行transaction fire
+			buyer = User.objects.get(username=request.user.username)
 			password = request.POST.get("password")
-			obj = BuyOrder(
-				master = master,
-				buyer = request.user,
-				price = price,
-				lot = lot,
-				)
-			obj.save()
-			return redirect("home")
+			success = buyer.check_password(password)
+			if success:
+				obj = BuyOrder(
+					master = master,
+					buyer = request.user,
+					price = price,
+					lot = lot,
+					)
+				obj.save()
+				return redirect("home")
+			else:
+				return HttpResponse("Password Incorrect")
