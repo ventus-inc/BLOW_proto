@@ -90,8 +90,8 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
 		requesting_user = self.request.user
 		if not requested_user == requesting_user:
 			raise PermissionDenied
-		token = Token.objects.get(buyer=requested_user)
+		token = Token.objects.filter(buyer=requested_user)
 		context['user'] = requested_user
-		context['token'] = token
+		context['tokens'] = token
 		return context
 
