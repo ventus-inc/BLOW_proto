@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class='row'>
+    <div class='col-md-8 col-md-offset-2'>
+    <p>My Tokens</p>
+    {% for token in tokens %}
+    <hr/>
+	<p>publisher:{{token.publisher}}</p>
+	<p>bought_price:{{token.bought_price}}</p>
+	<p>latest_price:{{token.latest_price}}</p>
+	<p>lot:{{token.lot}}</p>
+	<p>updated:{{token.updated}}</p>
+	<p>timestamp:{{token.timestamp}}</p>
+	{% endfor %}
+    </div>
+</div>
+{% endblock content %}

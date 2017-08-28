@@ -29,7 +29,7 @@
           <ul class="dropdown-menu">
             <li><a href="{{ request.user.profile.get_absolute_url }}">Profile</a></li>
             <li><a href="{{ request.user.profile.get_absolute_url }}update_profile">Edit Profile</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a href="{% url 'tokens:asset' username=request.user.username %}">My Tokens</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{% url 'logout' %}">Logout</a></li>
           </ul>
