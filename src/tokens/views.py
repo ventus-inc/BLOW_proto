@@ -40,6 +40,9 @@ class BuyTokenView(LoginRequiredMixin, View):
 			master = User.objects.get(username=self.kwargs.get("username"))
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
+			# TODO: formでバリデーションとる&変数型変換
+			if int(lot) < 0 or float(price) < 0:
+				return HttpResponse("Invalid input")
 			context = {
 				'master': master,
 				'buyer': request.user,
@@ -57,6 +60,9 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
 			master = User.objects.get(username=self.kwargs.get("username"))
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
+			# TODO: formでバリデーションとる&変数型変換
+			if int(lot) < 0 or float(price) < 0:
+				return HttpResponse("Invalid input")
 			buyer = User.objects.get(username=request.user.username)
 			password = request.POST.get("password")
 			success = buyer.check_password(password)

@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator
 
 # Create your models here.
 
@@ -16,9 +17,17 @@ class Token(models.Model):
 	token_board 	= models.ForeignKey(TokenBoard, null=True, blank=True) # 暫定的にblank=True
 	publisher 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=None, related_name='publisher')
 	buyer 		= models.ForeignKey(settings.AUTH_USER_MODEL, default=None, related_name='owner')
-	bought_price 	= models.FloatField(null=True, blank=True, default=None)
-	latest_price 	= models.FloatField(null=True, blank=True, default=None)
-	lot				= models.IntegerField(default=0)
+	bought_price 	= models.FloatField(
+							null=True, 
+							blank=True, 
+							default=None,
+							validators = [MinValueValidator(0.0)])
+	latest_price 	= models.FloatField(
+							null=True, 
+							blank=True, 
+							default=None,
+							validators = [MinValueValidator(0.0)])
+	lot				= models.PositiveIntegerField(default=0)
 	updated			= models.DateTimeField(auto_now=True)
 	timestamp		= models.DateTimeField(auto_now_add=True)
 
@@ -56,9 +65,13 @@ class BuyOrder(models.Model):
 	"""
 	master 		= models.ForeignKey(settings.AUTH_USER_MODEL, related_name='master')
 	buyer 		= models.ForeignKey(settings.AUTH_USER_MODEL, related_name='buyer')
-	price 		= models.FloatField(null=True, blank=True, default=None)
+	price 		= models.FloatField(
+							null=True, 
+							blank=True, 
+							default=None,
+							validators = [MinValueValidator(0.0)])
 	token_board = models.ForeignKey(TokenBoard, blank=True, null=True)
-	lot			= models.IntegerField(default=0)
+	lot			= models.PositiveIntegerField(default=0)
 	timestamp   = models.DateTimeField(auto_now_add=True)
 
 	objects = BuyOrderManager()
