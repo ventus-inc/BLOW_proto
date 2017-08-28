@@ -9,7 +9,7 @@ from django.views.generic import (
 from django.shortcuts import get_object_or_404, redirect
 from datetime import datetime
 
-from .models import BuyOrder
+from .models import Token, BuyOrder
 
 User = get_user_model()
 
@@ -90,6 +90,8 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
 		requesting_user = self.request.user
 		if not requested_user == requesting_user:
 			raise PermissionDenied
+		token = Token.objects.get(buyer=requested_user)
 		context['user'] = requested_user
+		context['token'] = token
 		return context
 
