@@ -59,6 +59,7 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
 			buyer = User.objects.get(username=request.user.username)
 			password = request.POST.get("password")
 			success = buyer.check_password(password)
+			# TODO: formでvalidation取るようにする
 			if success:
 				obj = BuyOrder(
 					master = master,
