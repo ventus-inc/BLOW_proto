@@ -32,7 +32,9 @@
             <!-- template loopで回す -->
 
             <!-- <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="購入欄に数値設定するURL">{{ price }}</a></th><td class="r3">{{ salenumber }}</td><td class="r4"><p class="bar" style="width: {{ width }}%;"></p></td></tr> -->
-            <tr class="sale"><td class="r0"></td><td class="r1"></td><th class="r2"><a href="#">1.046249</a></th><td class="r3">1</td><td class="r4"><p class="bar" style="width: 6.25%;"></p></td></tr>
+            {% for sell in sells %}
+            <tr class="sell"><td class="r0"><p class="bar" style="width: 100%;"></p></td><td class="r1"></td><th class="r2"><a href="#">{{ sell.price }}</a></th><td class="r3">{{ sell.lot }}</td><td class="r4"></td></tr>
+            {% endfor %}
 
             <!-- ここもtemplate loopで回す -->
             {% for buy in buys %}
@@ -43,7 +45,7 @@
         </div>
         <hr/>
         <!-- hogehogeはtokenidかな -->
-        <form method="POST" action='{% url "tokens:buy" username=object.username %}'>
+        <form method="POST" action='{% url "tokens:sell" username=object.username %}'>
             {% csrf_token %}
             <div class="form-group">
                 <b>購入希望数</b>
@@ -63,7 +65,7 @@
                 <em><span id="ref_price">---</span><small>JPY</small></em>
             </div>
                 <div class="go_confirmpage">
-                <input class="btn btn-primary btn_go_confirm" type="submit" value="売却確認画面へ" name='buy'>
+                <input class="btn btn-primary btn_go_confirm" type="submit" value="売却確認画面へ" name='sell'>
                 </div>
             <div class="buy_sell_count">
                 <span>本日の残り取引回数</span>

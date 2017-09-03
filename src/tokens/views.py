@@ -9,7 +9,7 @@ from django.views.generic import (
 from django.shortcuts import get_object_or_404, redirect
 from datetime import datetime
 
-from .models import Token, BuyOrder
+from .models import Token, BuyOrder, SellOrder
 
 User = get_user_model()
 
@@ -21,6 +21,7 @@ class BuyUserTokenView(DetailView):
     def get_context_data(self, **kwargs):
     	context = super(BuyUserTokenView, self).get_context_data(**kwargs)
     	user = User.objects.get(username=self.kwargs.get("username"))
+    	context['sells'] = SellOrder.objects.get_summed_lot(user)
     	context['buys'] = BuyOrder.objects.get_summed_lot(user)
     	return context
 
@@ -37,6 +38,7 @@ class SellUserTokenView(DetailView):
     def get_context_data(self, **kwargs):
     	context = super(SellUserTokenView, self).get_context_data(**kwargs)
     	user = User.objects.get(username=self.kwargs.get("username"))
+    	context['sells'] = SellOrder.objects.get_summed_lot(user)
     	context['buys'] = BuyOrder.objects.get_summed_lot(user)
     	return context
 
@@ -67,6 +69,25 @@ class BuyTokenView(LoginRequiredMixin, View):
 			}
 			return render(request, "tokens/buy_confirm.html", context=context)
 
+# TODO: SellTokenView, SellTokenConfirmView をformsで書き換え
+class SellTokenView(LoginRequiredMixin, View):
+	"""Token購入するView。売買板の表示と、SellTokenConfirmViewへの遷移をする
+	"""
+	def post(self, request, *args, **kwargs):
+		if request.method == 'POST' and request.user.is_authenticated():
+			master = User.objects.get(username=self.kwargs.get("username"))
+			lot = request.POST.get("lot")
+			price = request.POST.get("value")
+			# TODO: formでバリデーションとる&変数型変換
+			if int(lot) < 0 or float(price) < 0:
+				return HttpResponse("Invalid input")
+			context = {
+				'master': master,
+				'seller': request.user,
+				'price': price,
+				'lot': lot,
+			}
+			return render(request, "tokens/sell_confirm.html", context=context)
 
 class BuyTokenConfirmView(LoginRequiredMixin, View):
 	"""Token購入の確認をするView
@@ -87,6 +108,33 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
 				obj = BuyOrder(
 					master = master,
 					buyer = request.user,
+					price = price,
+					lot = lot,
+					)
+				obj.save()
+				return redirect("home")
+			else:
+				return HttpResponse("Password Incorrect")
+
+class SellTokenConfirmView(LoginRequiredMixin, View):
+	"""Token購入の確認をするView
+	"""
+	def post(self, request, *args, **kwargs):
+		if request.method == 'POST' and request.user.is_authenticated():
+			master = User.objects.get(username=self.kwargs.get("username"))
+			lot = request.POST.get("lot")
+			price = request.POST.get("value")
+			# TODO: formでバリデーションとる&変数型変換
+			if int(lot) < 0 or float(price) < 0:
+				return HttpResponse("Invalid input")
+			seller = User.objects.get(username=request.user.username)
+			password = request.POST.get("password")
+			success = seller.check_password(password)
+			# TODO: formでvalidation取るようにする
+			if success:
+				obj = SellOrder(
+					master = master,
+					seller = request.user,
 					price = price,
 					lot = lot,
 					)
