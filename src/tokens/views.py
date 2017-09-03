@@ -15,11 +15,27 @@ User = get_user_model()
 
 # Create your views here.
 
-class UserTokenView(DetailView):
-    template_name = 'tokens/user_token.html'
+class BuyUserTokenView(DetailView):
+    template_name = 'tokens/buy_user_tokens.html'
 
     def get_context_data(self, **kwargs):
-    	context = super(UserTokenView, self).get_context_data(**kwargs)
+    	context = super(BuyUserTokenView, self).get_context_data(**kwargs)
+    	user = User.objects.get(username=self.kwargs.get("username"))
+    	context['buys'] = BuyOrder.objects.get_summed_lot(user)
+    	return context
+
+    def get_object(self):
+        user = User.objects.get(username=self.kwargs.get("username"))
+        return get_object_or_404(
+            User,
+            username__iexact=self.kwargs.get("username")
+        )
+
+class SellUserTokenView(DetailView):
+    template_name = 'tokens/sell_user_tokens.html'
+
+    def get_context_data(self, **kwargs):
+    	context = super(SellUserTokenView, self).get_context_data(**kwargs)
     	user = User.objects.get(username=self.kwargs.get("username"))
     	context['buys'] = BuyOrder.objects.get_summed_lot(user)
     	return context

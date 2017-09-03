@@ -68,8 +68,11 @@ class UserProfile(models.Model):
     def get_absolute_url(self):
         return reverse_lazy("profiles:detail", kwargs={"username": self.user.username})
 
-    def get_token_url(self):
-        return reverse_lazy("tokens:token", kwargs={"username": self.user.username})
+    def get_buy_token_url(self):
+        return reverse_lazy("tokens:buy_token", kwargs={"username": self.user.username})
+
+    def get_sell_token_url(self):
+        return reverse_lazy("tokens:sell_token", kwargs={"username": self.user.username})
 
 
 
