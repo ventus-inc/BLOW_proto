@@ -3,7 +3,7 @@
 {% block content %}
 <div class='row'>
     <div class='col-md-8 col-md-offset-2'>
-        <p>{{master}}のトークンを以下の条件で購入します</p>
+        <p>{{master}}のトークンを以下の条件で売却します</p>
         <form method="POST" action='{% url "tokens:sell_confirm" username=master %}'>
             {% csrf_token %}
             <div class="form-group">
