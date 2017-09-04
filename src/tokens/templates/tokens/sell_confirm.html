@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class='row'>
+    <div class='col-md-8 col-md-offset-2'>
+        <p>{{master}}のトークンを以下の条件で売却します</p>
+        <form method="POST" action='{% url "tokens:sell_confirm" username=master %}'>
+            {% csrf_token %}
+            <div class="form-group">
+                <b>売却希望数</b>
+                <input class="form-control" type='hidden' name='username' value="{{ object }}"/>
+                <input class="form-control" id="input_amount" name="lot" type="number" value="{{lot}}" placeholder='{{lot}}' required />
+                <p>BLO</p>
+            </div>  
+            <div class="form-group" style="margin-top: 10px">
+                <b>売却希望単価</b>
+                <input class="form-control" id="sell_price" name="value" type="float" value="{{price}}" placeholder='{{price}}' required />
+                <p>ETH</p>
+            </div>
+            <div class="form-group">
+                <b>Password</b>
+                <input class="form-control" id="input_amount" name="password" type='password' placeholder='認証のためパスワードを入力してください' required />
+            </div>  
+            <div class="ref_price">
+                <b>参考価格</b>
+                <!-- <em><span id="ref_price">{% if price %}{{price}}{% else %}-{% endif %}</span><small>JPY</small></em> -->
+                <em><span id="ref_price">---</span><small>JPY</small></em>
+            </div>
+            <div class="go_confirmpage">
+                <input class="btn btn-primary btn_go_confirm" type="submit" value="購入">
+            </div>
+         </form>
+    </div>
+</div>
+{% endblock content %}
