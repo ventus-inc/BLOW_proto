@@ -120,7 +120,11 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                     lot=lot,
                 )
                 obj.save()
+                if SellOrder.objects.filter(price__gte=price).exists():
+                    token_transaction_check(SellOrder.objects.filter(master=master)[0],
+                                            BuyOrder.objects.filter(master=master, buyer=buyer, price=price)[0])
                 return redirect("home")
+
             else:
                 return HttpResponse("Password Incorrect")
 
@@ -149,6 +153,11 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
                     lot=lot,
                 )
                 obj.save()
+                # 要 リファクタリング model部分
+                buyer = BuyOrder.objects.latest('price')
+                if buyer.price >= int(obj.price):
+                    token_transaction_check(buyer,
+                                            SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
                 return redirect("home")
             else:
                 return HttpResponse("Password Incorrect")
@@ -176,3 +185,19 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
         context['user'] = requested_user
         context['tokens'] = token
         return context
+
+
+def token_transaction_check(now_user, previous_user):
+    print(now_user)
+    if now_user.lot >= previous_user.lot:
+        token_transaction_confirm(now_user, previous_user)
+    else:
+        token_transaction_confirm(now_user, previous_user)
+    return 0
+
+
+def token_transaction_confirm(higher, lower):
+    higher.lot = higher.lot - lower.lot
+    higher.save()
+    lower.delete()
+    return 0
