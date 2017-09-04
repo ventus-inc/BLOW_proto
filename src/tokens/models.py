@@ -77,7 +77,7 @@ class BuyOrder(models.Model):
 	objects = BuyOrderManager()
 
 	def __str__(self):
-		message = 'order_by:'+ str(self.master) + '\n at:'+ str(self.timestamp)
+		message = 'order_by:'+ str(self.buyer) + '\n at:'+ str(self.timestamp)
 		return str(message)
 
 	class Meta:

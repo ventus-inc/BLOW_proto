@@ -59,7 +59,7 @@ class BuyTokenView(LoginRequiredMixin, View):
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
 			# TODO: formでバリデーションとる&変数型変換
-			if int(lot) < 0 or float(price) < 0:
+			if int(lot) <= 0 or float(price) <= 0:
 				return HttpResponse("Invalid input")
 			context = {
 				'master': master,
@@ -79,7 +79,7 @@ class SellTokenView(LoginRequiredMixin, View):
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
 			# TODO: formでバリデーションとる&変数型変換
-			if int(lot) < 0 or float(price) < 0:
+			if int(lot) <= 0 or float(price) <= 0:
 				return HttpResponse("Invalid input")
 			context = {
 				'master': master,
@@ -98,7 +98,7 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
 			# TODO: formでバリデーションとる&変数型変換
-			if int(lot) < 0 or float(price) < 0:
+			if int(lot) <= 0 or float(price) <= 0:
 				return HttpResponse("Invalid input")
 			buyer = User.objects.get(username=request.user.username)
 			password = request.POST.get("password")
@@ -125,7 +125,7 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
 			lot = request.POST.get("lot")
 			price = request.POST.get("value")
 			# TODO: formでバリデーションとる&変数型変換
-			if int(lot) < 0 or float(price) < 0:
+			if int(lot) <= 0 or float(price) <= 0:
 				return HttpResponse("Invalid input")
 			seller = User.objects.get(username=request.user.username)
 			password = request.POST.get("password")
