@@ -7,7 +7,7 @@ from django.core.validators import MinValueValidator
 
 class TokenBoard(models.Model):
     """売り買い板
-	"""
+    """
     master = models.ForeignKey(settings.AUTH_USER_MODEL, default=None)
     price_now = models.FloatField(null=True, blank=True, default=None)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -15,7 +15,7 @@ class TokenBoard(models.Model):
 
 class Token(models.Model):
     """持っているtoken
-	"""
+    """
     token_board = models.ForeignKey(TokenBoard, null=True, blank=True)  # 暫定的にblank=True
     publisher = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, related_name='publisher')
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, related_name='owner')
@@ -66,7 +66,7 @@ class BuyOrderManager(models.Manager):
 
 class BuyOrder(models.Model):
     """注文
-	"""
+    """
     master = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='origin_buy')
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='buyer')
     price = models.FloatField(
@@ -120,7 +120,7 @@ class SellOrderManager(models.Manager):
 
 class SellOrder(models.Model):
     """注文
-	"""
+    """
     master = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='origin_sell')
     seller = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='seller')
     price = models.FloatField(
