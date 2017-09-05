@@ -58,7 +58,7 @@ class BuyTokenView(LoginRequiredMixin, View):
     """Token購入するView。売買板の表示と、BuyTokenConfirmViewへの遷移をする
     """
 
-    def post(self, request, *axrgs, **kwargs):
+    def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
             master = User.objects.get(username=self.kwargs.get("username"))
             lot = request.POST.get("lot")
@@ -121,8 +121,6 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                     lot=lot,
                 )
                 obj.save()
-                # Wi
-
                 try:
                     exist = SellOrder.objects.filter(price__icontains=price,master=master).first()
                 except SellOrder.DoesNotExist:
@@ -161,7 +159,6 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
                     lot=lot,
                 )
                 obj.save()
-                # WIP
                 try:
                     exist = BuyOrder.objects.filter(price__icontains=price,master=master).first()
                 except BuyOrder.DoesNotExist:
@@ -200,7 +197,6 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
 
 
 def token_transaction_check(now_user, previous_user):
-    print(now_user)
     if now_user.lot >= previous_user.lot:
         token_transaction_confirm(now_user, previous_user)
     else:
