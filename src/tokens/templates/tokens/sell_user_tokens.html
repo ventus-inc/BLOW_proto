@@ -48,13 +48,13 @@
         <form method="POST" action='{% url "tokens:sell" username=object.username %}'>
             {% csrf_token %}
             <div class="form-group">
-                <b>購入希望数</b>
+                <b>売却希望数</b>
                 <input class="form-control" type='hidden' name='username' value="{{ object }}"/>
                 <input class="form-control" id="input_amount" name="lot" type="number" value="{{ request.POST.lot }}" placeholder='売却希望数'>
                 <p>BLO</p>
             </div>  
             <div class="form-group" style="margin-top: 10px">
-                <b>購入希望単価</b>
+                <b>売却希望単価</b>
                 <!-- 以下valueも変数で与える -->
                 <input class="form-control" id="input_rate" name="value" type="float" value="{{ request.POST.value }}" placeholder='売却希望単価'>
                 <p>ETH</p>

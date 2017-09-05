@@ -19,14 +19,15 @@ class SendTransactionView(View):
             to_user = request.POST.get("username")
             to_user = User.objects.get(username=to_user)
             to_wallet = WalletProfile.objects.get(user=to_user)
-            '''
-            DEBUG用
+            """DEBUG用
             print(from_wallet.num)
             print(request.user)
             print(query)
-            '''
+            """
             web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
             web3.personal.signAndSendTransaction(formatters.input_transaction_formatter(web3.eth, {'to': to_wallet.num, 'from': from_wallet.num, 'value': value}), request.user.username)
             return render(request, "home.html")
 
-
+class SendTokenView(View):
+    def post(self,reqest, *args, **kwargs):
+        return 0
