@@ -24,6 +24,7 @@ class BuyUserTokenView(DetailView):
         user = User.objects.get(username=self.kwargs.get("username"))
         context['sells'] = SellOrder.objects.get_summed_lot(user)
         context['buys'] = BuyOrder.objects.get_summed_lot(user)
+        context['lists'] = BuyOrder.objects.get_summed_list(user)
         return context
 
     def get_object(self):

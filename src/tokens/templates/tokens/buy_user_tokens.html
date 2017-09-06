@@ -10,8 +10,8 @@
 <script type="text/javascript">
     var ctx = document.getElementById("myChart");
 
-    var buydata = {{buys|safe}}
-    console.log(buydata[0])
+    var list = {{lists|safe}}
+
     var myChart = new Chart(ctx, {
         type: 'horizontalBar',
         data: {

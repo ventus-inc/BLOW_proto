@@ -63,6 +63,32 @@ class BuyOrderManager(models.Manager):
         total_buys.append(obj)
         return total_buys
 
+    def get_summed_list(self, master):
+        buys = self.get_queryset().filter(master=master).order_by('-price')
+        total_price = []
+        total_lot = []
+        previous_price = None
+        for i in buys:
+            if not previous_price:
+                price = i.price
+                lot = i.lot
+            else:
+                if not previous_price == i.price:
+                    total_price.append(price)
+                    total_lot.append(lot)
+                    price = i.price
+                    lot = i.lot
+                else:
+                    lot += i.lot
+                    obj.lot += i.lot
+            previous_price = i.price
+        total_price.append(price)
+        total_lot.append(lot)
+        print("totalprices")
+        print(total_price)
+        print(total_lot)
+        return [total_price,total_lot]
+
 
 class BuyOrder(models.Model):
     """注文
