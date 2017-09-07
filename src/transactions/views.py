@@ -30,6 +30,7 @@ class SendTransactionView(View):
 class SendTokenTransactionView(View):
     def post(self,request, *args, **kwargs):
         if request.method == 'POST':
+            
             query = request.POST.get("value")
             value = int(query) * 100000
             # 1Blowあたり10000weiとして送金します
