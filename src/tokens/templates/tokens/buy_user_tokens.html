@@ -10,7 +10,7 @@
 <script type="text/javascript">
     var ctx = document.getElementById("buyChart");
 
-    var list = {{lists|safe}}
+    var list = {{buy_lists|safe}}
     var price = list[0]
     var lot = list[1]
     console.log(price)
@@ -33,6 +33,41 @@
                 xAxes: [{
                     ticks: {
                         reverse:true,
+                        beginAtZero:true,
+                    }
+                }]
+            },
+            legend: {
+                display: false,
+            }
+        }
+    });
+</script>
+<script type="text/javascript">
+    var ctx = document.getElementById("sellChart");
+
+    var list = {{sell_lists|safe}}
+    var price = list[0]
+    var lot = list[1]
+    console.log(price)
+    console.log(lot)
+
+    var sellChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+            labels: price,
+            datasets: [{
+                // label: '# of Votes',
+                data: lot,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    ticks: {
                         beginAtZero:true,
                     }
                 }]
@@ -81,6 +116,7 @@
         </table>
         </div>
         <hr/>
+        <canvas id="sellChart" width="400" height="400"></canvas>
         <canvas id="buyChart" width="400" height="400"></canvas>
         <!-- hogehogeはtokenidかな -->
         <form method="POST" action='{% url "tokens:buy" username=object.username %}'>

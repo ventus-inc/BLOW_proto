@@ -24,7 +24,8 @@ class BuyUserTokenView(DetailView):
         user = User.objects.get(username=self.kwargs.get("username"))
         context['sells'] = SellOrder.objects.get_summed_lot(user)
         context['buys'] = BuyOrder.objects.get_summed_lot(user)
-        context['lists'] = BuyOrder.objects.get_summed_list(user)
+        context['buy_lists'] = BuyOrder.objects.get_summed_list(user)
+        context['sell_lists'] = SellOrder.objects.get_summed_list(user)
         return context
 
     def get_object(self):
@@ -43,7 +44,8 @@ class SellUserTokenView(DetailView):
         user = User.objects.get(username=self.kwargs.get("username"))
         context['sells'] = SellOrder.objects.get_summed_lot(user)
         context['buys'] = BuyOrder.objects.get_summed_lot(user)
-        context['sell_lists'] = BuyOrder.objects.get_summed_lot(user)
+        context['buy_lists'] = BuyOrder.objects.get_summed_list(user)
+        context['sell_lists'] = BuyOrder.objects.get_summed_list(user)
         return context
 
     def get_object(self):
@@ -57,7 +59,7 @@ class SellUserTokenView(DetailView):
 # TODO: BuyTokenView, BuyTokenConfirmView をformsで書き換え
 class BuyTokenView(LoginRequiredMixin, View):
     """Token購入するView。売買板の表示と、BuyTokenConfirmViewへの遷移をする
-	"""
+        """
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -79,7 +81,7 @@ class BuyTokenView(LoginRequiredMixin, View):
 # TODO: SellTokenView, SellTokenConfirmView をformsで書き換え
 class SellTokenView(LoginRequiredMixin, View):
     """Token購入するView。売買板の表示と、SellTokenConfirmViewへの遷移をする
-	"""
+        """
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -100,7 +102,7 @@ class SellTokenView(LoginRequiredMixin, View):
 
 class BuyTokenConfirmView(LoginRequiredMixin, View):
     """Token購入の確認をするView
-	"""
+        """
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -129,7 +131,7 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
 
 class SellTokenConfirmView(LoginRequiredMixin, View):
     """Token購入の確認をするView
-	"""
+        """
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -158,7 +160,7 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
 
 class MyAssetTokensView(LoginRequiredMixin, DetailView):
     """保持しているTokenの情報を表示するページ
-	"""
+        """
     template_name = 'tokens/asset_token.html'
 
     def get_object(self):
@@ -169,7 +171,8 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
         )
 
     def get_context_data(self, *args, **kwargs):
-        context = super(MyAssetTokensView, self).get_context_data(*args, **kwargs)
+        context = super(MyAssetTokensView, self).get_context_data(
+            *args, **kwargs)
         requested_user = User.objects.get(username=self.kwargs.get("username"))
         requesting_user = self.request.user
         if not requested_user == requesting_user:
