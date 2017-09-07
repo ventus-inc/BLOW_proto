@@ -7,7 +7,6 @@ from django.views import View
 from django.views.generic import (
     DetailView)
 from django.shortcuts import get_object_or_404, redirect
-from datetime import datetime
 
 from .models import Token, BuyOrder, SellOrder
 
@@ -29,7 +28,7 @@ class BuyUserTokenView(DetailView):
         return context
 
     def get_object(self):
-        user = User.objects.get(username=self.kwargs.get("username"))
+        # user = User.objects.get(username=self.kwargs.get("username"))
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
@@ -49,7 +48,7 @@ class SellUserTokenView(DetailView):
         return context
 
     def get_object(self):
-        user = User.objects.get(username=self.kwargs.get("username"))
+        # user = User.objects.get(username=self.kwargs.get("username"))
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
@@ -164,7 +163,7 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
     template_name = 'tokens/asset_token.html'
 
     def get_object(self):
-        user = User.objects.get(username=self.kwargs.get("username"))
+        # user = User.objects.get(username=self.kwargs.get("username"))
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")

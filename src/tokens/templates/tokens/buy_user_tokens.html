@@ -10,11 +10,27 @@
 <script type="text/javascript">
     var ctx = document.getElementById("buyChart");
 
-    var list = {{buy_lists|safe}}
-    var price = list[0]
-    var lot = list[1]
-    console.log(price)
-    console.log(lot)
+    backgroundColor = []
+    borderColor = []
+    var sellList = {{sell_lists|safe}}
+    var sellPrice = sellList[0]
+    var sellLot = sellList[1]
+    for (i = 0; i < sellPrice.length; i++) {
+        backgroundColor.push('rgba(255, 99, 132, 0.2)')
+        borderColor.push('rgba(255, 99, 132, 1)')
+    }
+
+    var buyList = {{buy_lists|safe}}
+    var buyPrice = buyList[0]
+    var buyLot = buyList[1]
+    for (i = 0; i < buyPrice.length; i++) {
+        backgroundColor.push('rgba(54, 162, 235, 0.2)')
+        borderColor.push('rgba(54, 162, 235, 1)')
+    }
+
+    price = sellPrice.concat(buyPrice)
+    lot = sellLot.concat(buyLot)
+    
 
     var buyChart = new Chart(ctx, {
         type: 'horizontalBar',
@@ -23,44 +39,8 @@
             datasets: [{
                 // label: '# of Votes',
                 data: lot,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1,
-            }]
-        },
-        options: {
-            scales: {
-                xAxes: [{
-                    ticks: {
-                        reverse:true,
-                        beginAtZero:true,
-                    }
-                }]
-            },
-            legend: {
-                display: false,
-            }
-        }
-    });
-</script>
-<script type="text/javascript">
-    var ctx = document.getElementById("sellChart");
-
-    var list = {{sell_lists|safe}}
-    var price = list[0]
-    var lot = list[1]
-    console.log(price)
-    console.log(lot)
-
-    var sellChart = new Chart(ctx, {
-        type: 'horizontalBar',
-        data: {
-            labels: price,
-            datasets: [{
-                // label: '# of Votes',
-                data: lot,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
                 borderWidth: 1,
             }]
         },
@@ -69,12 +49,16 @@
                 xAxes: [{
                     ticks: {
                         beginAtZero:true,
-                    }
-                }]
+                    },
+                }],
+                yAxes: [{
+                    barThickness: 20,
+                }],
             },
             legend: {
                 display: false,
-            }
+            },
+
         }
     });
 </script>
@@ -116,8 +100,7 @@
         </table>
         </div>
         <hr/>
-        <canvas id="sellChart" width="400" height="400"></canvas>
-        <canvas id="buyChart" width="400" height="400"></canvas>
+        <canvas id="buyChart" width="400"></canvas>
         <!-- hogehogeはtokenidかな -->
         <form method="POST" action='{% url "tokens:buy" username=object.username %}'>
             {% csrf_token %}
