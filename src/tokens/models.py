@@ -22,7 +22,6 @@ class Token(models.Model):
         settings.AUTH_USER_MODEL, default=None, related_name='publisher')
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL,
                               default=None, related_name='owner')
-
     bought_price = models.FloatField(
         null=True,
         blank=True,
@@ -73,6 +72,8 @@ class BuyOrderManager(models.Manager):
         total_price = []
         total_lot = []
         previous_price = None
+        price = 0
+        lot = 0
         for i in buys:
             if not previous_price:
                 price = i.price
@@ -89,9 +90,6 @@ class BuyOrderManager(models.Manager):
             previous_price = i.price
         total_price.append(price)
         total_lot.append(lot)
-        print("totalprices")
-        print(total_price)
-        print(total_lot)
         return [total_price, total_lot]
 
 
@@ -156,6 +154,8 @@ class SellOrderManager(models.Manager):
         total_price = []
         total_lot = []
         previous_price = None
+        price = 0
+        lot = 0
         for i in sells:
             if not previous_price:
                 price = i.price
@@ -172,9 +172,6 @@ class SellOrderManager(models.Manager):
             previous_price = i.price
         total_price.append(price)
         total_lot.append(lot)
-        print("totalprices")
-        print(total_price)
-        print(total_lot)
         return [total_price, total_lot]
 
 

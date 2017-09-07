@@ -45,7 +45,7 @@
         </table>
         </div>
         <hr/>
-        <canvas id="buyChart" width="400"></canvas>
+        <canvas id="tradeChart" width="400"></canvas>
         <!-- hogehogeはtokenidかな -->
         <form method="POST" action='{% url "tokens:buy" username=object.username %}'>
             {% csrf_token %}

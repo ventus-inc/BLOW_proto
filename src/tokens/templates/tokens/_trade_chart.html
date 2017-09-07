@@ -1,6 +1,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 <script type="text/javascript">
-    var ctx = document.getElementById("buyChart");
+    var ctx = document.getElementById("tradeChart");
 
     backgroundColor = []
     borderColor = []
@@ -24,7 +24,7 @@
     lot = sellLot.concat(buyLot)
     
 
-    var buyChart = new Chart(ctx, {
+    var tradeChart = new Chart(ctx, {
         type: 'horizontalBar',
         data: {
             labels: price,

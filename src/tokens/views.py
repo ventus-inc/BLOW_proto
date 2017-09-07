@@ -59,11 +59,7 @@ class SellUserTokenView(DetailView):
 # TODO: BuyTokenView, BuyTokenConfirmView をformsで書き換え
 class BuyTokenView(LoginRequiredMixin, View):
     """Token購入するView。売買板の表示と、BuyTokenConfirmViewへの遷移をする
-<<<<<<< HEAD
-        """
-== == == =
     """
->>>>>>> develop
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -85,11 +81,7 @@ class BuyTokenView(LoginRequiredMixin, View):
 # TODO: SellTokenView, SellTokenConfirmView をformsで書き換え
 class SellTokenView(LoginRequiredMixin, View):
     """Token購入するView。売買板の表示と、SellTokenConfirmViewへの遷移をする
-<< << << < HEAD
-        """
-=======
     """
->>>>>> > develop
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -110,11 +102,7 @@ class SellTokenView(LoginRequiredMixin, View):
 
 class BuyTokenConfirmView(LoginRequiredMixin, View):
     """Token購入の確認をするView
-<<<<<<< HEAD
-        """
-== == == =
     """
->>>>>>> develop
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -153,11 +141,7 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
 
 class SellTokenConfirmView(LoginRequiredMixin, View):
     """Token購入の確認をするView
-<< << << < HEAD
-        """
-=======
     """
->>>>>> > develop
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -195,11 +179,7 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
 
 class MyAssetTokensView(LoginRequiredMixin, DetailView):
     """保持しているTokenの情報を表示するページ
-<<<<<<< HEAD
-        """
-== == == =
     """
->>>>>>> develop
     template_name = 'tokens/asset_token.html'
 
     def get_object(self):
