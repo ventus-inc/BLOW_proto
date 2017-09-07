@@ -44,7 +44,7 @@ class SellUserTokenView(DetailView):
         context['sells'] = SellOrder.objects.get_summed_lot(user)
         context['buys'] = BuyOrder.objects.get_summed_lot(user)
         context['buy_lists'] = BuyOrder.objects.get_summed_list(user)
-        context['sell_lists'] = BuyOrder.objects.get_summed_list(user)
+        context['sell_lists'] = SellOrder.objects.get_summed_list(user)
         return context
 
     def get_object(self):

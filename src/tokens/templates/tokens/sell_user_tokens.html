@@ -6,6 +6,7 @@
         loadTweetContainer("tweet-container")
     });
 </script> -->
+{% include "tokens/_trade_chart.html" %}
 {% endblock script %}
 
 {% block content %}
@@ -44,6 +45,7 @@
         </table>
         </div>
         <hr/>
+        <canvas id="buyChart" width="400"></canvas>
         <!-- hogehogeはtokenidかな -->
         <form method="POST" action='{% url "tokens:sell" username=object.username %}'>
             {% csrf_token %}
