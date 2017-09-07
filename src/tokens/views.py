@@ -7,6 +7,7 @@ from django.views import View
 from django.views.generic import (
     DetailView)
 from django.shortcuts import get_object_or_404, redirect
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Token, BuyOrder, SellOrder
 
@@ -58,7 +59,11 @@ class SellUserTokenView(DetailView):
 # TODO: BuyTokenView, BuyTokenConfirmView をformsで書き換え
 class BuyTokenView(LoginRequiredMixin, View):
     """Token購入するView。売買板の表示と、BuyTokenConfirmViewへの遷移をする
+<<<<<<< HEAD
         """
+== == == =
+    """
+>>>>>>> develop
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -80,7 +85,11 @@ class BuyTokenView(LoginRequiredMixin, View):
 # TODO: SellTokenView, SellTokenConfirmView をformsで書き換え
 class SellTokenView(LoginRequiredMixin, View):
     """Token購入するView。売買板の表示と、SellTokenConfirmViewへの遷移をする
+<< << << < HEAD
         """
+=======
+    """
+>>>>>> > develop
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -101,7 +110,11 @@ class SellTokenView(LoginRequiredMixin, View):
 
 class BuyTokenConfirmView(LoginRequiredMixin, View):
     """Token購入の確認をするView
+<<<<<<< HEAD
         """
+== == == =
+    """
+>>>>>>> develop
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -123,14 +136,28 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                     lot=lot,
                 )
                 obj.save()
+                try:
+                    exist = SellOrder.objects.filter(
+                        price__icontains=price, master=master).first()
+                except SellOrder.DoesNotExist:
+                    exist = None
+                # if SellOrder.objects.get(price__iexact=price) is not None:
+                if exist is not None:
+                    token_transaction_check(SellOrder.objects.filter(master=master, price=price)[0],
+                                            BuyOrder.objects.filter(master=master, buyer=buyer, price=price)[0])
                 return redirect("home")
+
             else:
                 return HttpResponse("Password Incorrect")
 
 
 class SellTokenConfirmView(LoginRequiredMixin, View):
     """Token購入の確認をするView
+<< << << < HEAD
         """
+=======
+    """
+>>>>>> > develop
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST' and request.user.is_authenticated():
@@ -152,6 +179,15 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
                     lot=lot,
                 )
                 obj.save()
+                try:
+                    exist = BuyOrder.objects.filter(
+                        price__icontains=price, master=master).first()
+                except BuyOrder.DoesNotExist:
+                    exist = None
+
+                if exist is not None:
+                    token_transaction_check(BuyOrder.objects.filter(master=master, price=price)[0],
+                                            SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
                 return redirect("home")
             else:
                 return HttpResponse("Password Incorrect")
@@ -159,7 +195,11 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
 
 class MyAssetTokensView(LoginRequiredMixin, DetailView):
     """保持しているTokenの情報を表示するページ
+<<<<<<< HEAD
         """
+== == == =
+    """
+>>>>>>> develop
     template_name = 'tokens/asset_token.html'
 
     def get_object(self):
@@ -180,3 +220,35 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
         context['user'] = requested_user
         context['tokens'] = token
         return context
+
+
+def token_transaction_check(now_user, previous_user):
+    if now_user.lot >= previous_user.lot:
+        token_transaction_confirm(now_user, previous_user)
+    else:
+        token_transaction_confirm(previous_user, now_user)
+    return 0
+
+
+def token_transaction_confirm(higher, lower):
+    higher.lot = higher.lot - lower.lot
+    higher.save()
+    lower.delete()
+    if higher.lot is 0:
+        higher.delete()
+    return 0
+
+"""関数は作ったけど使ってない・・・
+
+
+def token_board_check(BuyOrder, SellOrder):
+    try:
+        exist = BuyOrder.objects.filter(
+            price__icontains=price, master=master).first()
+    except BuyOrder.DoesNotExist:
+        exist = None
+
+    if exist is not None:
+        token_transaction_check(BuyOrder.objects.filter(master=master, price=price)[0],
+                                SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
+"""
