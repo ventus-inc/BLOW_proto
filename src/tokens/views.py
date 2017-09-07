@@ -122,10 +122,11 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                 )
                 obj.save()
                 try:
-                    exist = SellOrder.objects.filter(price__icontains=price,master=master).first()
+                    exist = SellOrder.objects.filter(
+                        price__icontains=price, master=master).first()
                 except SellOrder.DoesNotExist:
                     exist = None
-                #if SellOrder.objects.get(price__iexact=price) is not None:
+                # if SellOrder.objects.get(price__iexact=price) is not None:
                 if exist is not None:
                     token_transaction_check(SellOrder.objects.filter(master=master, price=price)[0],
                                             BuyOrder.objects.filter(master=master, buyer=buyer, price=price)[0])
@@ -160,7 +161,8 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
                 )
                 obj.save()
                 try:
-                    exist = BuyOrder.objects.filter(price__icontains=price,master=master).first()
+                    exist = BuyOrder.objects.filter(
+                        price__icontains=price, master=master).first()
                 except BuyOrder.DoesNotExist:
                     exist = None
 
@@ -185,7 +187,8 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
         )
 
     def get_context_data(self, *args, **kwargs):
-        context = super(MyAssetTokensView, self).get_context_data(*args, **kwargs)
+        context = super(MyAssetTokensView, self).get_context_data(
+            *args, **kwargs)
         requested_user = User.objects.get(username=self.kwargs.get("username"))
         requesting_user = self.request.user
         if not requested_user == requesting_user:
