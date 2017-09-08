@@ -1,5 +1,5 @@
 from django.views.generic.edit import FormView
-from web3 import Web3,formatters,KeepAliveRPCProvider
+from web3 import Web3, formatters, KeepAliveRPCProvider
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.views import View
@@ -7,11 +7,13 @@ from django.shortcuts import render
 from accounts.models import WalletProfile
 from django.core.files import File
 
-import json,sys
+import json, sys
 
 User = get_user_model()
+
+
 class SendTransactionView(View):
-    def post(self,request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if request.method == 'POST':
             query = request.POST.get("value")
             value = int(query) * 100000
@@ -36,8 +38,9 @@ class SendTransactionView(View):
 
             return render(request, "home.html")
 
+
 class SendTokenTransactionView(View):
-    def post(self,request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if request.method == 'POST':
             from_wallet = WalletProfile.objects.get(user=request.user)
             to_user = request.POST.get("username")
@@ -50,7 +53,5 @@ class SendTokenTransactionView(View):
             abi = json.loads(f.read())
             cnt = web3.eth.contract(abi, "0x6e0c7be2765df7b728f7bcea307696f27ff5ce78", "My")
             cnt.transact(transaction={'from': from_wallet.num}).transfer(to_wallet.num, 10)
-            #web3.eth.contract()
+            # web3.eth.contract()
         return render(request, "home.html")
-
-
