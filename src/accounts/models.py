@@ -96,14 +96,15 @@ class WalletProfile(models.Model):
     )
 
     def get_token_lot(self):
+        contract_address = "0x6e0c7be2765df7b728f7bcea307696f27ff5ce78"
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
         web3.personal.unlockAccount(self.num, self.user.username)
         f = open("transactions/abi.json", 'r')
         abi = json.loads(f.read())
-        # TODO: これはトークンごとのアドレスを取得
-        cnt = web3.eth.contract(abi, "0xd32a2d87f45671afdd26be4862c8c3da91ea7b43", "My")
+        # TODO: トークンごとにアドレスを取得
+        cnt = web3.eth.contract(abi, contract_address, "My")
         tokenlot = cnt.call().balanceOf(self.num)
-        print(tokenlot)
+        # print(tokenlot)
         return tokenlot
 
     def __str__(self):
