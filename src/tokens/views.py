@@ -148,6 +148,9 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
             if int(lot) <= 0 or float(price) <= 0:
                 return HttpResponse("Invalid input")
             seller = User.objects.get(username=request.user.username)
+            seller_lot = seller.wallet.get_token_lot()
+            if seller_lot <= int(lot):
+                return HttpResponse("token足りないヨ")
             password = request.POST.get("password")
             success = seller.check_password(password)
             # TODO: formでvalidation取るようにする

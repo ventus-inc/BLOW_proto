@@ -2,8 +2,9 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.urls import reverse_lazy
+from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
 
-
+import json
 # Create your models here.
 
 class UserProfileManager(models.Manager):
@@ -75,9 +76,7 @@ class UserProfile(models.Model):
         return reverse_lazy("tokens:sell_token", kwargs={"username": self.user.username})
 
 
-
 class WalletProfile(models.Model):
-
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         primary_key=True,
@@ -90,9 +89,22 @@ class WalletProfile(models.Model):
         default=0,
         null=False,
     )
+    ########## WIP ############
+
+    def get_token_lot(self):
+        web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
+        web3.personal.unlockAccount(self.num, self.user.username)
+        f = open("transactions/abi.json", 'r')
+        abi = json.loads(f.read())
+        cnt = web3.eth.contract(abi, "0xd32a2d87f45671afdd26be4862c8c3da91ea7b43", "My")
+        tokenlot = cnt.call().balanceOf(self.num)
+        print(tokenlot)
+        return tokenlot
+        #########################
 
     def __str__(self):
         return self.num
+
 
 def post_save_user_receiver(sender, instance, created, *args, **kwargs):
     # print(instance)
