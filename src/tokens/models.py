@@ -67,6 +67,31 @@ class BuyOrderManager(models.Manager):
         total_buys.append(obj)
         return total_buys
 
+    def get_summed_list(self, master):
+        buys = self.get_queryset().filter(master=master).order_by('-price')
+        total_price = []
+        total_lot = []
+        previous_price = None
+        price = 0
+        lot = 0
+        for i in buys:
+            if not previous_price:
+                price = i.price
+                lot = i.lot
+            else:
+                if not previous_price == i.price:
+                    total_price.append(price)
+                    total_lot.append(lot)
+                    price = i.price
+                    lot = i.lot
+                else:
+                    lot += i.lot
+                    obj.lot += i.lot
+            previous_price = i.price
+        total_price.append(price)
+        total_lot.append(lot)
+        return [total_price, total_lot]
+
 
 class BuyOrder(models.Model):
     """注文
@@ -123,6 +148,31 @@ class SellOrderManager(models.Manager):
             previous_price = i.price
         total_sells.append(obj)
         return total_sells
+
+    def get_summed_list(self, master):
+        sells = self.get_queryset().filter(master=master).order_by('-price')
+        total_price = []
+        total_lot = []
+        previous_price = None
+        price = 0
+        lot = 0
+        for i in sells:
+            if not previous_price:
+                price = i.price
+                lot = i.lot
+            else:
+                if not previous_price == i.price:
+                    total_price.append(price)
+                    total_lot.append(lot)
+                    price = i.price
+                    lot = i.lot
+                else:
+                    lot += i.lot
+                    obj.lot += i.lot
+            previous_price = i.price
+        total_price.append(price)
+        total_lot.append(lot)
+        return [total_price, total_lot]
 
 
 class SellOrder(models.Model):

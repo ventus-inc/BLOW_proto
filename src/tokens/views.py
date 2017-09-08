@@ -7,7 +7,6 @@ from django.views import View
 from django.views.generic import (
     DetailView)
 from django.shortcuts import get_object_or_404, redirect
-from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Token, BuyOrder, SellOrder
@@ -25,10 +24,12 @@ class BuyUserTokenView(DetailView):
         user = User.objects.get(username=self.kwargs.get("username"))
         context['sells'] = SellOrder.objects.get_summed_lot(user)
         context['buys'] = BuyOrder.objects.get_summed_lot(user)
+        context['buy_lists'] = BuyOrder.objects.get_summed_list(user)
+        context['sell_lists'] = SellOrder.objects.get_summed_list(user)
         return context
 
     def get_object(self):
-        user = User.objects.get(username=self.kwargs.get("username"))
+        # user = User.objects.get(username=self.kwargs.get("username"))
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
@@ -43,10 +44,12 @@ class SellUserTokenView(DetailView):
         user = User.objects.get(username=self.kwargs.get("username"))
         context['sells'] = SellOrder.objects.get_summed_lot(user)
         context['buys'] = BuyOrder.objects.get_summed_lot(user)
+        context['buy_lists'] = BuyOrder.objects.get_summed_list(user)
+        context['sell_lists'] = SellOrder.objects.get_summed_list(user)
         return context
 
     def get_object(self):
-        user = User.objects.get(username=self.kwargs.get("username"))
+        # user = User.objects.get(username=self.kwargs.get("username"))
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
@@ -180,7 +183,7 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
     template_name = 'tokens/asset_token.html'
 
     def get_object(self):
-        user = User.objects.get(username=self.kwargs.get("username"))
+        # user = User.objects.get(username=self.kwargs.get("username"))
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
@@ -216,9 +219,12 @@ def token_transaction_confirm(higher, lower):
     return 0
 
 """関数は作ったけど使ってない・・・
-def token_board_check(BuyOrder,SellOrder):
+
+
+def token_board_check(BuyOrder, SellOrder):
     try:
-        exist = BuyOrder.objects.filter(price__icontains=price, master=master).first()
+        exist = BuyOrder.objects.filter(
+            price__icontains=price, master=master).first()
     except BuyOrder.DoesNotExist:
         exist = None
 
