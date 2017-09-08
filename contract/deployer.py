@@ -11,6 +11,8 @@ abi = open(token_abi)
 abi = json.loads(abi.read())
 cnt = web3.eth.contract()
 cnt.bytecode = '0x' + binary.read()
+binary.close()
+abi.close()
 cnt.abi = abi
 web3.personal.unlockAccount(web3.eth.coinbase, 'hoge')
 cnt.deploy(transaction={'from': web3.eth.coinbase, 'gas': 1000000}, args=(100, 'My', 2, 'test'))
