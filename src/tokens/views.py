@@ -10,7 +10,11 @@ from django.shortcuts import get_object_or_404, redirect
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
+from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
+
 from .models import Token, BuyOrder, SellOrder
+
+import sys,json
 
 User = get_user_model()
 
@@ -122,13 +126,15 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                 )
                 obj.save()
                 try:
-                    exist = SellOrder.objects.filter(price__icontains=price,master=master).first()
+                    exist = SellOrder.objects.filter(price__icontains=price, master=master).first()
                 except SellOrder.DoesNotExist:
                     exist = None
-                #if SellOrder.objects.get(price__iexact=price) is not None:
                 if exist is not None:
                     token_transaction_check(SellOrder.objects.filter(master=master, price=price)[0],
                                             BuyOrder.objects.filter(master=master, buyer=buyer, price=price)[0])
+                    buyer.wallet.selling_token -= int(lot)
+
+                    buyer.save()
                 return redirect("home")
 
             else:
@@ -151,10 +157,8 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
             seller_wallet = seller.wallet
             seller_lot = seller.wallet.get_token_lot()
             selling_token = seller.wallet.selling_token
-
             if (seller_lot - selling_token) <= int(lot):
-                return HttpResponse("token足りないヨ")
-
+                return HttpResponse("token足りない")
             password = request.POST.get("password")
             success = seller.check_password(password)
             # TODO: formでvalidation取るようにする
@@ -169,13 +173,21 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
                 seller.wallet.save()
                 obj.save()
                 try:
-                    exist = BuyOrder.objects.filter(price__icontains=price,master=master).first()
+                    exist = BuyOrder.objects.filter(price__icontains=price, master=master).first()
                 except BuyOrder.DoesNotExist:
                     exist = None
-
                 if exist is not None:
                     token_transaction_check(BuyOrder.objects.filter(master=master, price=price)[0],
                                             SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
+                    web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
+                    web3.personal.unlockAccount(seller.wallet.num, request.user.username)
+                    # 暫定的にABIを直接入力(どのトークンでも共通)
+                    f = open("transactions/abi.json", 'r')
+                    abi = json.loads(f.read())
+                    # contractのアドレスはトークンごと
+                    cnt = web3.eth.contract(abi, "0xd32a2d87f45671afdd26be4862c8c3da91ea7b43", "My")
+                    cnt.transact(transaction={'from': seller.wallet.num}).transfer(master.wallet.num, int(obj.lot))
+
                 return redirect("home")
             else:
                 return HttpResponse("Password Incorrect")

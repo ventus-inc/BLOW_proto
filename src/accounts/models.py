@@ -89,7 +89,7 @@ class WalletProfile(models.Model):
         default=0,
         null=False,
     )
-    #取引中トークンを売却中トークンとして所持
+    # TODO: 売却中トークンのマスターを取得
     selling_token = models.BigIntegerField(
         default=0,
         null=False,
@@ -100,6 +100,7 @@ class WalletProfile(models.Model):
         web3.personal.unlockAccount(self.num, self.user.username)
         f = open("transactions/abi.json", 'r')
         abi = json.loads(f.read())
+        # TODO: これはトークンごとのアドレスを取得
         cnt = web3.eth.contract(abi, "0xd32a2d87f45671afdd26be4862c8c3da91ea7b43", "My")
         tokenlot = cnt.call().balanceOf(self.num)
         print(tokenlot)
