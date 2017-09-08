@@ -48,7 +48,7 @@ class UserDetailView(DetailView):
     def __calc_balance(usr):
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
         user = User.objects.get(username=usr.kwargs.get("username"))
-        print(user.wallet)
+        print(user.wallet) #walletidを確認する用に便利なので、少し残しておく
         user.wallet.balance = web3.eth.getBalance(user.wallet.num)/100000
         user.wallet.save()
         return 0

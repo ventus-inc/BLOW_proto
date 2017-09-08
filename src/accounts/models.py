@@ -89,7 +89,11 @@ class WalletProfile(models.Model):
         default=0,
         null=False,
     )
-    ########## WIP ############
+    #取引中トークンを売却中トークンとして所持
+    selling_token = models.BigIntegerField(
+        default=0,
+        null=False,
+    )
 
     def get_token_lot(self):
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
@@ -100,7 +104,6 @@ class WalletProfile(models.Model):
         tokenlot = cnt.call().balanceOf(self.num)
         print(tokenlot)
         return tokenlot
-        #########################
 
     def __str__(self):
         return self.num
