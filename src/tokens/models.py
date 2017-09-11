@@ -16,9 +16,12 @@ class TokenBoard(models.Model):
 class Token(models.Model):
     """持っているtoken
     """
-    token_board = models.ForeignKey(TokenBoard, null=True, blank=True)  # 暫定的にblank=True
-    publisher = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, related_name='publisher')
-    buyer = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, related_name='owner')
+    token_board = models.ForeignKey(
+        TokenBoard, null=True, blank=True)  # 暫定的にblank=True
+    publisher = models.ForeignKey(
+        settings.AUTH_USER_MODEL, default=None, related_name='publisher')
+    buyer = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              default=None, related_name='owner')
     bought_price = models.FloatField(
         null=True,
         blank=True,
@@ -35,6 +38,7 @@ class Token(models.Model):
 
 
 class BuyOrderManager(models.Manager):
+
     def get_summed_lot(self, master):
         buys = self.get_queryset().filter(master=master).order_by('-price')
         total_buys = []
@@ -63,11 +67,37 @@ class BuyOrderManager(models.Manager):
         total_buys.append(obj)
         return total_buys
 
+    def get_summed_list(self, master):
+        buys = self.get_queryset().filter(master=master).order_by('-price')
+        total_price = []
+        total_lot = []
+        previous_price = None
+        price = 0
+        lot = 0
+        for i in buys:
+            if not previous_price:
+                price = i.price
+                lot = i.lot
+            else:
+                if not previous_price == i.price:
+                    total_price.append(price)
+                    total_lot.append(lot)
+                    price = i.price
+                    lot = i.lot
+                else:
+                    lot += i.lot
+                    obj.lot += i.lot
+            previous_price = i.price
+        total_price.append(price)
+        total_lot.append(lot)
+        return [total_price, total_lot]
+
 
 class BuyOrder(models.Model):
     """注文
     """
-    master = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='origin_buy')
+    master = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='origin_buy')
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='buyer')
     price = models.FloatField(
         null=True,
@@ -81,7 +111,8 @@ class BuyOrder(models.Model):
     objects = BuyOrderManager()
 
     def __str__(self):
-        message = 'order_by:' + str(self.buyer) + '\n at:' + str(self.timestamp)
+        message = 'order_by:' + str(self.buyer) + \
+            '\n at:' + str(self.timestamp)
         return str(message)
 
     class Meta:
@@ -89,6 +120,7 @@ class BuyOrder(models.Model):
 
 
 class SellOrderManager(models.Manager):
+
     def get_summed_lot(self, master):
         sells = self.get_queryset().filter(master=master).order_by('-price')
         total_sells = []
@@ -117,11 +149,37 @@ class SellOrderManager(models.Manager):
         total_sells.append(obj)
         return total_sells
 
+    def get_summed_list(self, master):
+        sells = self.get_queryset().filter(master=master).order_by('-price')
+        total_price = []
+        total_lot = []
+        previous_price = None
+        price = 0
+        lot = 0
+        for i in sells:
+            if not previous_price:
+                price = i.price
+                lot = i.lot
+            else:
+                if not previous_price == i.price:
+                    total_price.append(price)
+                    total_lot.append(lot)
+                    price = i.price
+                    lot = i.lot
+                else:
+                    lot += i.lot
+                    obj.lot += i.lot
+            previous_price = i.price
+        total_price.append(price)
+        total_lot.append(lot)
+        return [total_price, total_lot]
+
 
 class SellOrder(models.Model):
     """注文
     """
-    master = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='origin_sell')
+    master = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='origin_sell')
     seller = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='seller')
     price = models.FloatField(
         null=True,
@@ -135,7 +193,8 @@ class SellOrder(models.Model):
     objects = SellOrderManager()
 
     def __str__(self):
-        message = 'order_by:' + str(self.master) + '\n at:' + str(self.timestamp)
+        message = 'order_by:' + str(self.master) + \
+            '\n at:' + str(self.timestamp)
         return str(message)
 
     class Meta:

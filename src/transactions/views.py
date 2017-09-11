@@ -29,6 +29,7 @@ class SendTransactionView(View):
             print(query)
             """
             web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
+
             transaction = formatters.input_transaction_formatter(web3.eth,
                                                                  {'to': to_wallet.num,
                                                                   'from': from_wallet.num,
@@ -55,3 +56,4 @@ class SendTokenTransactionView(View):
             cnt.transact(transaction={'from': from_wallet.num}).transfer(to_wallet.num, 10)
             # web3.eth.contract()
         return render(request, "home.html")
+

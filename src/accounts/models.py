@@ -41,7 +41,8 @@ class UserProfileManager(models.Manager):
         profile = user.profile
         following = profile.following.all()
         following = profile.get_following()
-        qs = self.get_queryset().exclude(user__in=following).exclude(id=profile.id).order_by("?")[:limit_to]
+        qs = self.get_queryset().exclude(user__in=following).exclude(
+            id=profile.id).order_by("?")[:limit_to]
         return qs
 
 
@@ -64,17 +65,24 @@ class UserProfile(models.Model):
         return users.exclude(username=self.user.username)
 
     def get_follow_url(self):
-        return reverse_lazy("profiles:follow", kwargs={"username": self.user.username})
+        return reverse_lazy(
+            "profiles:follow",
+            kwargs={"username": self.user.username})
 
     def get_absolute_url(self):
-        return reverse_lazy("profiles:detail", kwargs={"username": self.user.username})
+        return reverse_lazy(
+            "profiles:detail",
+            kwargs={"username": self.user.username})
 
     def get_buy_token_url(self):
-        return reverse_lazy("tokens:buy_token", kwargs={"username": self.user.username})
+        return reverse_lazy(
+            "tokens:buy_token",
+            kwargs={"username": self.user.username})
 
     def get_sell_token_url(self):
-        return reverse_lazy("tokens:sell_token", kwargs={"username": self.user.username})
-
+        return reverse_lazy(
+            "tokens:sell_token",
+            kwargs={"username": self.user.username})
 
 class WalletProfile(models.Model):
     user = models.OneToOneField(

@@ -7,7 +7,6 @@ from django.views import View
 from django.views.generic import (
     DetailView)
 from django.shortcuts import get_object_or_404, redirect
-from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
 from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
@@ -29,10 +28,12 @@ class BuyUserTokenView(DetailView):
         user = User.objects.get(username=self.kwargs.get("username"))
         context['sells'] = SellOrder.objects.get_summed_lot(user)
         context['buys'] = BuyOrder.objects.get_summed_lot(user)
+        context['buy_lists'] = BuyOrder.objects.get_summed_list(user)
+        context['sell_lists'] = SellOrder.objects.get_summed_list(user)
         return context
 
     def get_object(self):
-        user = User.objects.get(username=self.kwargs.get("username"))
+        # user = User.objects.get(username=self.kwargs.get("username"))
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
@@ -47,10 +48,12 @@ class SellUserTokenView(DetailView):
         user = User.objects.get(username=self.kwargs.get("username"))
         context['sells'] = SellOrder.objects.get_summed_lot(user)
         context['buys'] = BuyOrder.objects.get_summed_lot(user)
+        context['buy_lists'] = BuyOrder.objects.get_summed_list(user)
+        context['sell_lists'] = SellOrder.objects.get_summed_list(user)
         return context
 
     def get_object(self):
-        user = User.objects.get(username=self.kwargs.get("username"))
+        # user = User.objects.get(username=self.kwargs.get("username"))
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
@@ -126,9 +129,17 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                 )
                 obj.save()
                 try:
+<<<<<<< HEAD
                     exist = SellOrder.objects.filter(price__icontains=price, master=master).first()
                 except SellOrder.DoesNotExist:
                     exist = None
+=======
+                    exist = SellOrder.objects.filter(
+                        price__icontains=price, master=master).first()
+                except SellOrder.DoesNotExist:
+                    exist = None
+                # if SellOrder.objects.get(price__iexact=price) is not None:
+>>>>>>> develop
                 if exist is not None:
                     seller = SellOrder.objects.filter(master=master, price=price)[0].seller
                     if int(lot) <= SellOrder.objects.filter(master=master, price=price)[0].lot:
@@ -181,7 +192,12 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
 
                 obj.save()
                 try:
+<<<<<<< HEAD
                     exist = BuyOrder.objects.filter(price__icontains=price, master=master).first()
+=======
+                    exist = BuyOrder.objects.filter(
+                        price__icontains=price, master=master).first()
+>>>>>>> develop
                 except BuyOrder.DoesNotExist:
                     exist = None
                 if exist is not None:
@@ -204,14 +220,15 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
     template_name = 'tokens/asset_token.html'
 
     def get_object(self):
-        user = User.objects.get(username=self.kwargs.get("username"))
+        # user = User.objects.get(username=self.kwargs.get("username"))
         return get_object_or_404(
             User,
             username__iexact=self.kwargs.get("username")
         )
 
     def get_context_data(self, *args, **kwargs):
-        context = super(MyAssetTokensView, self).get_context_data(*args, **kwargs)
+        context = super(MyAssetTokensView, self).get_context_data(
+            *args, **kwargs)
         requested_user = User.objects.get(username=self.kwargs.get("username"))
         requesting_user = self.request.user
         if not requested_user == requesting_user:
@@ -240,9 +257,12 @@ def token_transaction_confirm(higher, lower):
 
 
 """関数は作ったけど使ってない・・・
-def token_board_check(BuyOrder,SellOrder):
+
+
+def token_board_check(BuyOrder, SellOrder):
     try:
-        exist = BuyOrder.objects.filter(price__icontains=price, master=master).first()
+        exist = BuyOrder.objects.filter(
+            price__icontains=price, master=master).first()
     except BuyOrder.DoesNotExist:
         exist = None
 
@@ -250,7 +270,6 @@ def token_board_check(BuyOrder,SellOrder):
         token_transaction_check(BuyOrder.objects.filter(master=master, price=price)[0],
                                 SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
 """
-
 
 def send_token_transaction(seller, buyer, lot):
     token_address = "0x6e0c7be2765df7b728f7bcea307696f27ff5ce78"
@@ -263,3 +282,4 @@ def send_token_transaction(seller, buyer, lot):
     cnt = web3.eth.contract(abi, token_address, token_name)
     print(seller.wallet.num)
     cnt.transact(transaction={'from': seller.wallet.num}).transfer(buyer.wallet.num, lot)
+
