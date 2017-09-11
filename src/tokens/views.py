@@ -129,17 +129,13 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                 )
                 obj.save()
                 try:
-<<<<<<< HEAD
-                    exist = SellOrder.objects.filter(price__icontains=price, master=master).first()
-                except SellOrder.DoesNotExist:
-                    exist = None
-=======
+
                     exist = SellOrder.objects.filter(
                         price__icontains=price, master=master).first()
                 except SellOrder.DoesNotExist:
                     exist = None
                 # if SellOrder.objects.get(price__iexact=price) is not None:
->>>>>>> develop
+
                 if exist is not None:
                     seller = SellOrder.objects.filter(master=master, price=price)[0].seller
                     if int(lot) <= SellOrder.objects.filter(master=master, price=price)[0].lot:
@@ -192,12 +188,10 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
 
                 obj.save()
                 try:
-<<<<<<< HEAD
-                    exist = BuyOrder.objects.filter(price__icontains=price, master=master).first()
-=======
+
                     exist = BuyOrder.objects.filter(
                         price__icontains=price, master=master).first()
->>>>>>> develop
+
                 except BuyOrder.DoesNotExist:
                     exist = None
                 if exist is not None:
