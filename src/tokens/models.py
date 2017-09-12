@@ -16,6 +16,7 @@ class TokenBoard(models.Model):
 class Token(models.Model):
     """持っているtoken
     """
+    ground_token_address="0x60909257512ef71832cc8a0c54c0343ef19ebaaa"
     token_board = models.ForeignKey(
         TokenBoard, null=True, blank=True)  # 暫定的にblank=True
     publisher = models.ForeignKey(
@@ -35,11 +36,11 @@ class Token(models.Model):
     lot = models.PositiveIntegerField(default=0)
     updated = models.DateTimeField(auto_now=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-
+    token_address = models.CharField(default=ground_token_address,
+                                     max_length=255)
 
 
 class BuyOrderManager(models.Manager):
-
     def get_summed_lot(self, master):
         buys = self.get_queryset().filter(master=master).order_by('-price')
         total_buys = []
@@ -113,7 +114,7 @@ class BuyOrder(models.Model):
 
     def __str__(self):
         message = 'order_by:' + str(self.buyer) + \
-            '\n at:' + str(self.timestamp)
+                  '\n at:' + str(self.timestamp)
         return str(message)
 
     class Meta:
@@ -121,7 +122,6 @@ class BuyOrder(models.Model):
 
 
 class SellOrderManager(models.Manager):
-
     def get_summed_lot(self, master):
         sells = self.get_queryset().filter(master=master).order_by('-price')
         total_sells = []
@@ -195,8 +195,12 @@ class SellOrder(models.Model):
 
     def __str__(self):
         message = 'order_by:' + str(self.master) + \
-            '\n at:' + str(self.timestamp)
+                  '\n at:' + str(self.timestamp)
         return str(message)
 
     class Meta:
         ordering = ('price',)
+
+
+class GrandToken:
+    token_address = '0x60909257512ef71832cc8a0c54c0343ef19ebaaa'

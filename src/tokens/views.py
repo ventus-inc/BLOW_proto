@@ -266,14 +266,13 @@ def token_board_check(BuyOrder, SellOrder):
 """
 
 def send_token_transaction(seller, buyer, lot):
-    token_address = "0x60909257512ef71832cc8a0c54c0343ef19ebaaa"
     token_name = "My"
     web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
     web3.personal.unlockAccount(seller.wallet.num, seller.username)
     f = open("transactions/abi.json", 'r')
     abi = json.loads(f.read())
     # contractのアドレスはトークンごと abiは共通
-    cnt = web3.eth.contract(abi, token_address, token_name)
+    cnt = web3.eth.contract(abi, Token.ground_token_address, token_name)
     print(seller.wallet.num)
     cnt.transact(transaction={'from': seller.wallet.num}).transfer(buyer.wallet.num, lot)
 

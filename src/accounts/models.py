@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from django.conf import settings
 from django.urls import reverse_lazy
 from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
+from tokens.models import Token
 
 import json
 # Create your models here.
@@ -104,13 +105,12 @@ class WalletProfile(models.Model):
     )
 
     def get_token_lot(self):
-        contract_address = "0x60909257512ef71832cc8a0c54c0343ef19ebaaa"
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
         web3.personal.unlockAccount(self.num, self.user.username)
         f = open("transactions/abi.json", 'r')
         abi = json.loads(f.read())
         # TODO: トークンごとにアドレスを取得
-        cnt = web3.eth.contract(abi, contract_address, "My")
+        cnt = web3.eth.contract(abi, Token.ground_token_address, "My")
         tokenlot = cnt.call().balanceOf(self.num)
         # print(tokenlot)
         return tokenlot
