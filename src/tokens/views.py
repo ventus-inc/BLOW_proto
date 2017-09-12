@@ -266,7 +266,7 @@ def token_board_check(BuyOrder, SellOrder):
 """
 
 def send_token_transaction(seller, buyer, lot):
-    token_address = "0x6e0c7be2765df7b728f7bcea307696f27ff5ce78"
+    token_address = "0x60909257512ef71832cc8a0c54c0343ef19ebaaa"
     token_name = "My"
     web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
     web3.personal.unlockAccount(seller.wallet.num, seller.username)

@@ -104,7 +104,7 @@ class WalletProfile(models.Model):
     )
 
     def get_token_lot(self):
-        contract_address = "0x6e0c7be2765df7b728f7bcea307696f27ff5ce78"
+        contract_address = "0x60909257512ef71832cc8a0c54c0343ef19ebaaa"
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
         web3.personal.unlockAccount(self.num, self.user.username)
         f = open("transactions/abi.json", 'r')

@@ -37,6 +37,7 @@ class Token(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
+
 class BuyOrderManager(models.Manager):
 
     def get_summed_lot(self, master):

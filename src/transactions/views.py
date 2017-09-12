@@ -52,7 +52,7 @@ class SendTokenTransactionView(View):
             # 暫定的にABIを直接入力(どのトークンでも共通)
             f = open("transactions/abi.json", 'r')
             abi = json.loads(f.read())
-            cnt = web3.eth.contract(abi, "0x6e0c7be2765df7b728f7bcea307696f27ff5ce78", "My")
+            cnt = web3.eth.contract(abi, "0x60909257512ef71832cc8a0c54c0343ef19ebaaa", "My")
             cnt.transact(transaction={'from': from_wallet.num}).transfer(to_wallet.num, 10)
             # web3.eth.contract()
         return render(request, "home.html")
