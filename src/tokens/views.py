@@ -9,7 +9,11 @@ from django.views.generic import (
 from django.shortcuts import get_object_or_404, redirect
 from django.core.exceptions import ObjectDoesNotExist
 
+from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
+
 from .models import Token, BuyOrder, SellOrder
+
+import sys, json
 
 User = get_user_model()
 
@@ -125,14 +129,27 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                 )
                 obj.save()
                 try:
+
                     exist = SellOrder.objects.filter(
                         price__icontains=price, master=master).first()
                 except SellOrder.DoesNotExist:
                     exist = None
                 # if SellOrder.objects.get(price__iexact=price) is not None:
+
                 if exist is not None:
+                    seller = SellOrder.objects.filter(master=master, price=price)[0].seller
+                    if int(lot) <= SellOrder.objects.filter(master=master, price=price)[0].lot:
+                        seller.wallet.selling_token -= int(lot)
+                        seller.wallet.save()
+                    else:
+                        seller.wallet.selling_token = SellOrder.objects.filter(master=master, price=price)[0].lot
+
                     token_transaction_check(SellOrder.objects.filter(master=master, price=price)[0],
                                             BuyOrder.objects.filter(master=master, buyer=buyer, price=price)[0])
+
+                    print(seller.wallet.selling_token)
+                    send_token_transaction(master, buyer, int(obj.lot))
+                    buyer.save()
                 return redirect("home")
 
             else:
@@ -151,7 +168,13 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
             # TODO: formでバリデーションとる&変数型変換
             if int(lot) <= 0 or float(price) <= 0:
                 return HttpResponse("Invalid input")
+
             seller = User.objects.get(username=request.user.username)
+            seller_wallet = seller.wallet
+            seller_lot = seller.wallet.get_token_lot()
+            selling_token = seller.wallet.selling_token
+            if (seller_lot - selling_token) < int(lot):
+                return HttpResponse("token足りない")
             password = request.POST.get("password")
             success = seller.check_password(password)
             # TODO: formでvalidation取るようにする
@@ -162,16 +185,24 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
                     price=price,
                     lot=lot,
                 )
+
                 obj.save()
                 try:
+
                     exist = BuyOrder.objects.filter(
                         price__icontains=price, master=master).first()
+
                 except BuyOrder.DoesNotExist:
                     exist = None
-
                 if exist is not None:
                     token_transaction_check(BuyOrder.objects.filter(master=master, price=price)[0],
                                             SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
+                    send_token_transaction(seller, master, int(obj.lot))
+                else:
+                    seller.wallet.selling_token += int(obj.lot)
+                    seller.wallet.save()
+
+                print(seller.wallet.selling_token)
                 return redirect("home")
             else:
                 return HttpResponse("Password Incorrect")
@@ -218,6 +249,7 @@ def token_transaction_confirm(higher, lower):
         higher.delete()
     return 0
 
+
 """関数は作ったけど使ってない・・・
 
 
@@ -232,3 +264,15 @@ def token_board_check(BuyOrder, SellOrder):
         token_transaction_check(BuyOrder.objects.filter(master=master, price=price)[0],
                                 SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
 """
+
+def send_token_transaction(seller, buyer, lot):
+    token_name = "My"
+    web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
+    web3.personal.unlockAccount(seller.wallet.num, seller.username)
+    f = open("transactions/abi.json", 'r')
+    abi = json.loads(f.read())
+    # contractのアドレスはトークンごと abiは共通
+    cnt = web3.eth.contract(abi, Token.ground_token_address, token_name)
+    print(seller.wallet.num)
+    cnt.transact(transaction={'from': seller.wallet.num}).transfer(buyer.wallet.num, lot)
+

@@ -2,8 +2,10 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.urls import reverse_lazy
+from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
+from tokens.models import Token
 
-
+import json
 # Create your models here.
 
 class UserProfileManager(models.Manager):
@@ -83,9 +85,7 @@ class UserProfile(models.Model):
             "tokens:sell_token",
             kwargs={"username": self.user.username})
 
-
 class WalletProfile(models.Model):
-
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         primary_key=True,
@@ -98,6 +98,22 @@ class WalletProfile(models.Model):
         default=0,
         null=False,
     )
+    # TODO: 売却中トークンのマスターを取得
+    selling_token = models.BigIntegerField(
+        default=0,
+        null=False,
+    )
+
+    def get_token_lot(self):
+        web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
+        web3.personal.unlockAccount(self.num, self.user.username)
+        f = open("transactions/abi.json", 'r')
+        abi = json.loads(f.read())
+        # TODO: トークンごとにアドレスを取得
+        cnt = web3.eth.contract(abi, Token.ground_token_address, "My")
+        tokenlot = cnt.call().balanceOf(self.num)
+        # print(tokenlot)
+        return tokenlot
 
     def __str__(self):
         return self.num
