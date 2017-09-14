@@ -95,31 +95,11 @@ class BuyOrderManager(models.Manager):
         return [total_price, total_lot]
 
 
-class BuyOrder(models.Model):
+class BuyOrder(Order):
     """注文
     """
-    master = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='origin_buy')
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='buyer')
-    price = models.FloatField(
-        null=True,
-        blank=True,
-        default=None,
-        validators=[MinValueValidator(0.0)])
-    token_board = models.ForeignKey(TokenBoard, blank=True, null=True)
-    lot = models.PositiveIntegerField(default=0)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
     objects = BuyOrderManager()
-
-    def __str__(self):
-        message = 'order_by:' + str(self.buyer) + \
-                  '\n at:' + str(self.timestamp)
-        return str(message)
-
-    class Meta:
-        ordering = ('price',)
-
 
 class SellOrderManager(models.Manager):
     def get_summed_lot(self, master):
@@ -176,12 +156,16 @@ class SellOrderManager(models.Manager):
         return [total_price, total_lot]
 
 
-class SellOrder(models.Model):
+class SellOrder(Order):
     """注文
     """
+    seller = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='seller')
+    objects = SellOrderManager()
+
+
+class Order(models.Model):
     master = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='origin_sell')
-    seller = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='seller')
     price = models.FloatField(
         null=True,
         blank=True,
@@ -200,7 +184,59 @@ class SellOrder(models.Model):
 
     class Meta:
         ordering = ('price',)
+        abstract = True
 
 
-class GrandToken:
-    token_address = '0x60909257512ef71832cc8a0c54c0343ef19ebaaa'
+class OrderManager(models.Manager):
+    def get_summed_lot(self, master):
+        sells = self.get_queryset().filter(master=master).order_by('-price')
+        total_sells = []
+        previous_price = None
+        obj = SellOrder()
+        for i in sells:
+            if not previous_price:
+                obj = SellOrder(
+                    master=i.master,
+                    seller=i.seller,
+                    price=i.price,
+                    lot=i.lot,
+                )
+            else:
+                if not previous_price == i.price:
+                    total_sells.append(obj)
+                    obj = SellOrder(
+                        master=i.master,
+                        seller=i.seller,
+                        price=i.price,
+                        lot=i.lot,
+                    )
+                else:
+                    obj.lot += i.lot
+            previous_price = i.price
+        total_sells.append(obj)
+        return total_sells
+
+    def get_summed_list(self, master):
+        sells = self.get_queryset().filter(master=master).order_by('-price')
+        total_price = []
+        total_lot = []
+        previous_price = None
+        price = 0
+        lot = 0
+        for i in sells:
+            if not previous_price:
+                price = i.price
+                lot = i.lot
+            else:
+                if not previous_price == i.price:
+                    total_price.append(price)
+                    total_lot.append(lot)
+                    price = i.price
+                    lot = i.lot
+                else:
+                    lot += i.lot
+                    obj.lot += i.lot
+            previous_price = i.price
+        total_price.append(price)
+        total_lot.append(lot)
+        return [total_price, total_lot]
