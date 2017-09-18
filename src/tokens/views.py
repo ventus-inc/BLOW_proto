@@ -11,7 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
 
-from .models import Token, BuyOrder, SellOrder
+from .models import Token, BuyOrder, SellOrder, TokenBoard
 
 import sys, json
 
@@ -50,6 +50,7 @@ class SellUserTokenView(DetailView):
         context['buys'] = BuyOrder.objects.get_summed_lot(user)
         context['buy_lists'] = BuyOrder.objects.get_summed_list(user)
         context['sell_lists'] = SellOrder.objects.get_summed_list(user)
+        TokenBoard.object.get_seller(user)
         return context
 
     def get_object(self):
@@ -143,12 +144,13 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                         seller.wallet.save()
                     else:
                         seller.wallet.selling_token = SellOrder.objects.filter(master=master, price=price)[0].lot
-
+                    send_token_transaction(buyer,
+                                           int(obj.lot),seller)
                     token_transaction_check(SellOrder.objects.filter(master=master, price=price)[0],
                                             BuyOrder.objects.filter(master=master, buyer=buyer, price=price)[0])
 
                     print(seller.wallet.selling_token)
-                    send_token_transaction(master, buyer, int(obj.lot))
+
                     buyer.save()
                 return redirect("home")
 
@@ -195,9 +197,10 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
                 except BuyOrder.DoesNotExist:
                     exist = None
                 if exist is not None:
+                    buyer = BuyOrder.objects.filter(master=master, price=price)[0].buyer
                     token_transaction_check(BuyOrder.objects.filter(master=master, price=price)[0],
                                             SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
-                    send_token_transaction(seller, master, int(obj.lot))
+                    send_token_transaction(buyer, int(obj.lot), seller)
                 else:
                     seller.wallet.selling_token += int(obj.lot)
                     seller.wallet.save()
@@ -265,14 +268,16 @@ def token_board_check(BuyOrder, SellOrder):
                                 SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
 """
 
-def send_token_transaction(seller, buyer, lot):
+
+def send_token_transaction(buyer, lot, *seller):
     token_name = "My"
+    seller=seller[0]
     web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
     web3.personal.unlockAccount(seller.wallet.num, seller.username)
     f = open("transactions/abi.json", 'r')
     abi = json.loads(f.read())
     # contractのアドレスはトークンごと abiは共通
     cnt = web3.eth.contract(abi, Token.ground_token_address, token_name)
+    print(seller)
     print(seller.wallet.num)
     cnt.transact(transaction={'from': seller.wallet.num}).transfer(buyer.wallet.num, lot)
-
