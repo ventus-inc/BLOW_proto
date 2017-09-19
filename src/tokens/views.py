@@ -12,8 +12,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
 
 from .models import Token, BuyOrder, SellOrder, TokenBoard
+from accounts.models import WalletProfile
 
 import sys, json
+from time import sleep
 
 User = get_user_model()
 
@@ -145,7 +147,7 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                     else:
                         seller.wallet.selling_token = SellOrder.objects.filter(master=master, price=price)[0].lot
                     send_token_transaction(buyer,
-                                           int(obj.lot),seller)
+                                           int(obj.lot), seller)
                     token_transaction_check(SellOrder.objects.filter(master=master, price=price)[0],
                                             BuyOrder.objects.filter(master=master, buyer=buyer, price=price)[0])
 
@@ -236,6 +238,33 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
         return context
 
 
+class TokenIssueView(View):
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST' and request.user.is_authenticated():
+            to_user = User.objects.get(username=request.user.username)
+            to_wallet = WalletProfile.objects.get(user=to_user)
+            token_dir = '../contract/Token/FixedSupplyToken'
+            issue_lot = 1000
+
+            web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
+            token_binary = token_dir + '.bin'
+            token_abi = token_dir + '.abi'
+            binary = open(token_binary)
+            abi = open(token_abi)
+            abi = json.loads(abi.read())
+            cnt = web3.eth.contract()
+            cnt.bytecode = '0x' + binary.read()
+            cnt.abi = abi
+            web3.personal.unlockAccount(web3.eth.coinbase, '1')
+            transaction_hash = cnt.deploy(transaction={'from': web3.eth.coinbase, 'gas': 1000000})
+            sleep(4)
+            hash_detail = web3.eth.getTransactionReceipt(transaction_hash)
+            print(hash_detail.contractAddress)
+            token_address=hash_detail.contractAddress
+            from_wallet=WalletProfile.objects.filter(num=web3.eth.coinbase).first()
+            send_token_transaction(to_user,issue_lot,token_address,from_wallet.user)
+            return redirect("home")
+
 def token_transaction_check(now_user, previous_user):
     if now_user.lot >= previous_user.lot:
         token_transaction_confirm(now_user, previous_user)
@@ -269,15 +298,14 @@ def token_board_check(BuyOrder, SellOrder):
 """
 
 
-def send_token_transaction(buyer, lot, *seller):
-    token_name = "My"
-    seller=seller[0]
+def send_token_transaction(buyer, lot, token_address, *seller):
+    seller = seller[0]
     web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
     web3.personal.unlockAccount(seller.wallet.num, seller.username)
     f = open("transactions/abi.json", 'r')
     abi = json.loads(f.read())
     # contractのアドレスはトークンごと abiは共通
-    cnt = web3.eth.contract(abi, Token.ground_token_address, token_name)
+    cnt = web3.eth.contract(abi, token_address)
     print(seller)
     print(seller.wallet.num)
     cnt.transact(transaction={'from': seller.wallet.num}).transfer(buyer.wallet.num, lot)
