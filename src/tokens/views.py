@@ -175,7 +175,8 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
 
             seller = User.objects.get(username=request.user.username)
             seller_wallet = seller.wallet
-            seller_lot = seller.wallet.get_token_lot()
+            # TODO 各自のユーザーのアドレスへ
+            seller_lot = seller.wallet.get_token_lot(Token.ground_token_address)
             selling_token = seller.wallet.selling_token
             if (seller_lot - selling_token) < int(lot):
                 return HttpResponse("token足りない")
@@ -244,8 +245,8 @@ class TokenIssueView(View):
             to_user = User.objects.get(username=request.user.username)
             to_wallet = WalletProfile.objects.get(user=to_user)
             token_dir = '../contract/Token/FixedSupplyToken'
-            #
-            issue_lot = 100000
+            # TOkenの発行量
+            issue_lot = 1000000
 
             web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
             token_binary = token_dir + '.bin'
@@ -307,6 +308,8 @@ def send_token_transaction(buyer, lot, token_address, *seller):
     abi = json.loads(f.read())
     # contractのアドレスはトークンごと abiは共通
     cnt = web3.eth.contract(abi, token_address)
-    print(seller)
-    print(seller.wallet.num)
+    #print(seller)
+    #print(seller.wallet.num)
     cnt.transact(transaction={'from': seller.wallet.num}).transfer(buyer.wallet.num, lot)
+    buyer.wallet.token_balance = buyer.wallet.get_token_lot(token_address)
+    buyer.wallet.save()
