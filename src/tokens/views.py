@@ -244,7 +244,8 @@ class TokenIssueView(View):
             to_user = User.objects.get(username=request.user.username)
             to_wallet = WalletProfile.objects.get(user=to_user)
             token_dir = '../contract/Token/FixedSupplyToken'
-            issue_lot = 1000
+            #
+            issue_lot = 100000
 
             web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
             token_binary = token_dir + '.bin'
