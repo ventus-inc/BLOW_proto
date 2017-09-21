@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
 
 from .models import Token, BuyOrder, SellOrder, TokenBoard
-from accounts.models import WalletProfile
+from accounts.models import WalletProfile,UserProfile
 
 import sys, json
 from time import sleep
@@ -257,14 +257,17 @@ class TokenIssueView(View):
             cnt = web3.eth.contract()
             cnt.bytecode = '0x' + binary.read()
             cnt.abi = abi
-            from_wallet = WalletProfile.objects.filter(num=web3.eth.coinbase).first()
-            web3.personal.unlockAccount(web3.eth.coinbase, from_wallet.user.username)
+
+            #TODO トークン発行時のパスフレーズを入力できるようにする
+            admin = UserProfile.objects.first()
+            web3.personal.unlockAccount(web3.eth.coinbase, admin.user.username)
+
             transaction_hash = cnt.deploy(transaction={'from': web3.eth.coinbase, 'gas': 1000000})
             sleep(4)
             hash_detail = web3.eth.getTransactionReceipt(transaction_hash)
             print(hash_detail.contractAddress)
-            token_address=hash_detail.contractAddress
-
+            token_address = hash_detail.contractAddress
+            from_wallet = WalletProfile.objects.filter(num=web3.eth.coinbase).first()
             send_token_transaction(to_user,issue_lot,token_address,from_wallet.user)
             return redirect("home")
 
