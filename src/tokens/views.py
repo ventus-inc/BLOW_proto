@@ -245,7 +245,7 @@ class TokenIssueView(View):
             to_user = User.objects.get(username=request.user.username)
             to_wallet = WalletProfile.objects.get(user=to_user)
             token_dir = '../contract/Token/FixedSupplyToken'
-            # TOkenの発行量
+            # Tokenの発行量
             issue_lot = 1000000
 
             web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
@@ -261,7 +261,7 @@ class TokenIssueView(View):
             #TODO トークン発行時のパスフレーズを入力できるようにする
             admin = UserProfile.objects.first()
             web3.personal.unlockAccount(web3.eth.coinbase, admin.user.username)
-
+            print(admin.user.password)
             transaction_hash = cnt.deploy(transaction={'from': web3.eth.coinbase, 'gas': 1000000})
             sleep(4)
             hash_detail = web3.eth.getTransactionReceipt(transaction_hash)

@@ -92,7 +92,7 @@ class WalletProfile(models.Model):
         related_name='wallet')
     num = models.CharField(
         blank=True,
-        null=True,
+        null=False,
         max_length=40,)
     balance = models.BigIntegerField(
         default=0,
@@ -108,7 +108,7 @@ class WalletProfile(models.Model):
         null=False,
     )
 
-    def get_token_lot(self,token_address):
+    def get_token_lot(self, token_address):
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
         web3.personal.unlockAccount(self.num, self.user.username)
         f = open("transactions/abi.json", 'r')
