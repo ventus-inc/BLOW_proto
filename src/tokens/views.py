@@ -147,7 +147,7 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                     else:
                         seller.wallet.selling_token = SellOrder.objects.filter(master=master, price=price)[0].lot
                     send_token_transaction(buyer,
-                                           int(obj.lot), seller)
+                                           int(obj.lot),master.profile.token_address, seller)
                     token_transaction_check(SellOrder.objects.filter(master=master, price=price)[0],
                                             BuyOrder.objects.filter(master=master, buyer=buyer, price=price)[0])
 
@@ -176,7 +176,10 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
             seller = User.objects.get(username=request.user.username)
             seller_wallet = seller.wallet
             # TODO 各自のユーザーのアドレスへ
-            seller_lot = seller.wallet.get_token_lot(Token.ground_token_address)
+            print(seller.profile.token_address)
+            token_address = master.profile.token_address
+            print(token_address)
+            seller_lot = seller.wallet.get_token_lot(token_address)
             selling_token = seller.wallet.selling_token
             if (seller_lot - selling_token) < int(lot):
                 return HttpResponse("token足りない")
@@ -203,7 +206,7 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
                     buyer = BuyOrder.objects.filter(master=master, price=price)[0].buyer
                     token_transaction_check(BuyOrder.objects.filter(master=master, price=price)[0],
                                             SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
-                    send_token_transaction(buyer, int(obj.lot), seller)
+                    send_token_transaction(buyer, int(obj.lot), token_address,seller)
                 else:
                     seller.wallet.selling_token += int(obj.lot)
                     seller.wallet.save()
@@ -261,12 +264,16 @@ class TokenIssueView(View):
             #TODO トークン発行時のパスフレーズを入力できるようにする
             admin = UserProfile.objects.first()
             web3.personal.unlockAccount(web3.eth.coinbase, admin.user.username)
-            print(admin.user.password)
+            #print(admin.user.password)
             transaction_hash = cnt.deploy(transaction={'from': web3.eth.coinbase, 'gas': 1000000})
             sleep(4)
             hash_detail = web3.eth.getTransactionReceipt(transaction_hash)
             print(hash_detail.contractAddress)
             token_address = hash_detail.contractAddress
+            token_user = User.objects.get(username=request.user.username)
+            token_user.profile.token_address = token_address
+            token_user.profile.save()
+            print(token_user.profile.token_address)
             from_wallet = WalletProfile.objects.filter(num=web3.eth.coinbase).first()
             send_token_transaction(to_user,issue_lot,token_address,from_wallet.user)
             return redirect("home")

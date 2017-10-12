@@ -56,6 +56,7 @@ class UserProfile(models.Model):
         blank=True,
         related_name='followed_by')
     image = models.ImageField(upload_to='profile_image', blank=True)
+    token_address = models.CharField(max_length=256)
     objects = UserProfileManager()
 
     def __str__(self):
