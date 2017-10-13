@@ -48,6 +48,7 @@ class SendTokenTransactionView(View):
             to_user = request.POST.get("username")
             to_user = User.objects.get(username=to_user)
             to_wallet = WalletProfile.objects.get(user=to_user)
+
             web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
             web3.personal.unlockAccount(from_wallet.num, request.user.username)
             # 暫定的にABIを直接入力(どのトークンでも共通)

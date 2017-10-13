@@ -75,7 +75,7 @@ class UserDetailView(DetailView):
         return context
 
 class UserFollowView(View):
-    def get(self, request, username, *args, **kwargs):
+    def get(self, request: object, username: object, args: object, kwargs: object) -> object:
         toggle_user = get_object_or_404(User, username__iexact=username)
         if request.user.is_authenticated():
             is_following = UserProfile.objects.toggle_follow(request.user, toggle_user)

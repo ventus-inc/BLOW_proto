@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
 
 from .models import Token, BuyOrder, SellOrder, TokenBoard
-from accounts.models import WalletProfile,UserProfile
+from accounts.models import WalletProfile, UserProfile
 
 import sys, json
 from time import sleep
@@ -147,7 +147,7 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                     else:
                         seller.wallet.selling_token = SellOrder.objects.filter(master=master, price=price)[0].lot
                     send_token_transaction(buyer,
-                                           int(obj.lot),master.profile.token_address, seller)
+                                           int(obj.lot), master.profile.token_address, seller)
                     token_transaction_check(SellOrder.objects.filter(master=master, price=price)[0],
                                             BuyOrder.objects.filter(master=master, buyer=buyer, price=price)[0])
 
@@ -206,7 +206,7 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
                     buyer = BuyOrder.objects.filter(master=master, price=price)[0].buyer
                     token_transaction_check(BuyOrder.objects.filter(master=master, price=price)[0],
                                             SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
-                    send_token_transaction(buyer, int(obj.lot), token_address,seller)
+                    send_token_transaction(buyer, int(obj.lot), token_address, seller)
                 else:
                     seller.wallet.selling_token += int(obj.lot)
                     seller.wallet.save()
@@ -250,7 +250,6 @@ class TokenIssueView(View):
             token_dir = '../contract/Token/FixedSupplyToken'
             # Tokenの発行量
             issue_lot = 1000000
-
             web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
             token_binary = token_dir + '.bin'
             token_abi = token_dir + '.abi'
@@ -261,10 +260,11 @@ class TokenIssueView(View):
             cnt.bytecode = '0x' + binary.read()
             cnt.abi = abi
 
-            #TODO トークン発行時のパスフレーズを入力できるようにする
+            # TODO トークン発行時のパスフレーズを入力できるようにする
             admin = UserProfile.objects.first()
-            web3.personal.unlockAccount(web3.eth.coinbase, admin.user.username)
-            #print(admin.user.password)
+            unlock_validation(web3.eth.coinbase,admin.user.username,web3)
+            #web3.personal.unlockAccount(web3.eth.coinbase, admin.user.username)
+            # print(admin.user.password)
             transaction_hash = cnt.deploy(transaction={'from': web3.eth.coinbase, 'gas': 1000000})
             sleep(4)
             hash_detail = web3.eth.getTransactionReceipt(transaction_hash)
@@ -275,8 +275,9 @@ class TokenIssueView(View):
             token_user.profile.save()
             print(token_user.profile.token_address)
             from_wallet = WalletProfile.objects.filter(num=web3.eth.coinbase).first()
-            send_token_transaction(to_user,issue_lot,token_address,from_wallet.user)
+            send_token_transaction(to_user, issue_lot, token_address, from_wallet.user)
             return redirect("home")
+
 
 def token_transaction_check(now_user, previous_user):
     if now_user.lot >= previous_user.lot:
@@ -314,13 +315,20 @@ def token_board_check(BuyOrder, SellOrder):
 def send_token_transaction(buyer, lot, token_address, *seller):
     seller = seller[0]
     web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
-    web3.personal.unlockAccount(seller.wallet.num, seller.username)
+    unlock_validation(seller.wallet.num, seller.username, web3)
     f = open("transactions/abi.json", 'r')
     abi = json.loads(f.read())
     # contractのアドレスはトークンごと abiは共通
     cnt = web3.eth.contract(abi, token_address)
-    #print(seller)
-    #print(seller.wallet.num)
+    # print(seller)
+    # print(seller.wallet.num)
     cnt.transact(transaction={'from': seller.wallet.num}).transfer(buyer.wallet.num, lot)
     buyer.wallet.token_balance = buyer.wallet.get_token_lot(token_address)
     buyer.wallet.save()
+
+
+def unlock_validation(wallet_num, passphrase, web3):
+    if web3.personal.unlockAccount(wallet_num, passphrase):
+        return True
+    else:
+        return redirect("error.html")
