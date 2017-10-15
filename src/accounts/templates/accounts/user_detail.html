@@ -22,7 +22,7 @@
         {% for user in object.profile.have_token.all %}
             <a href="../{{ user.username }}">{{ user.username }}</a><br/>
         {% empty %}
-            <p> 誰のトークン持っていません
+            <p> トークンを持っていません
         {% endfor %}
         <form id='send-form' class="navbar-form navbar-left" method='POST' action='{% url "transaction:send" %}'>
             {% csrf_token %}

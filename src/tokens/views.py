@@ -147,7 +147,10 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                     else:
                         seller.wallet.selling_token = SellOrder.objects.filter(master=master, price=price)[0].lot
                     send_token_transaction(buyer,
-                                           int(obj.lot), master.profile.token_address, seller)
+                                           int(obj.lot),
+                                           master.profile.token_address,
+                                           False,
+                                           seller,)
                     token_transaction_check(SellOrder.objects.filter(master=master, price=price)[0],
                                             BuyOrder.objects.filter(master=master, buyer=buyer, price=price)[0])
 
@@ -204,9 +207,16 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
                     exist = None
                 if exist is not None:
                     buyer = BuyOrder.objects.filter(master=master, price=price)[0].buyer
-                    token_transaction_check(BuyOrder.objects.filter(master=master, price=price)[0],
-                                            SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
-                    send_token_transaction(buyer, int(obj.lot), token_address, seller)
+                    token_transaction_check(BuyOrder.objects.filter(master=master,
+                                                                    price=price)[0],
+                                            SellOrder.objects.filter(master=master,
+                                                                     seller=seller,
+                                                                     price=price)[0])
+                    send_token_transaction(buyer,
+                                           int(obj.lot),
+                                           token_address,
+                                           False,
+                                           seller)
                 else:
                     seller.wallet.selling_token += int(obj.lot)
                     seller.wallet.save()
@@ -275,7 +285,7 @@ class TokenIssueView(View):
             token_user.profile.save()
 
             from_wallet = WalletProfile.objects.filter(num=web3.eth.coinbase).first()
-            send_token_transaction(to_user, issue_lot, token_address, from_wallet.user, True)
+            send_token_transaction(to_user, issue_lot, token_address, True, from_wallet.user)
             return redirect("home")
 
 
@@ -312,7 +322,8 @@ def token_board_check(BuyOrder, SellOrder):
 """
 
 
-def send_token_transaction(buyer, lot, token_address, *seller, is_issue=False):
+def send_token_transaction(buyer, lot, token_address, is_issue, *seller):
+
     seller = seller[0]
     web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
     unlock_validation(seller.wallet.num, seller.username, web3)
@@ -325,12 +336,14 @@ def send_token_transaction(buyer, lot, token_address, *seller, is_issue=False):
     # print(seller.wallet.num)
     cnt.transact(transaction={'from': seller.wallet.num}).transfer(buyer.wallet.num, lot)
     buyer.wallet.token_balance = buyer.wallet.get_token_lot(token_address)
-    if is_issue:
-        token_user = User.objects.get(username=seller.username)
-        buyer.have_token.add(buyer.profile)
+    if is_issue is True:
+        buyer.profile.have_token.add(buyer)
     else:
-        token_user = User.objects.get(username=seller.username)
-        buyer.have_token.add(seller.profile)
+        print("---------------")
+        buyer.profile.have_token.add(seller)
+        print(seller.profile)
+    buyer.profile.save()
+    print(buyer.have_token.all())
     buyer.wallet.save()
 
 
