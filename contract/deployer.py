@@ -5,7 +5,6 @@ import json
 import os
 
 args = sys.argv
-cmd = "tree D:\\Doc /f > D:\\tree.txt"
 cmd = "solc --bin --abi Token.sol -o Token"
 os.system(cmd)
 
