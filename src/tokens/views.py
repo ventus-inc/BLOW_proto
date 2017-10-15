@@ -268,17 +268,14 @@ class TokenIssueView(View):
             transaction_hash = cnt.deploy(transaction={'from': web3.eth.coinbase, 'gas': 1000000})
             sleep(4)
             hash_detail = web3.eth.getTransactionReceipt(transaction_hash)
-            print(hash_detail.contractAddress)
+            #DEBUG print(hash_detail.contractAddress)
             token_address = hash_detail.contractAddress
             token_user = User.objects.get(username=request.user.username)
             token_user.profile.token_address = token_address
-            token_user.profile.have_token.add(token_user)
-            token_user.profile.save()
-            print(token_user.profile.have_token.all())
             token_user.profile.save()
 
             from_wallet = WalletProfile.objects.filter(num=web3.eth.coinbase).first()
-            send_token_transaction(to_user, issue_lot, token_address, from_wallet.user)
+            send_token_transaction(to_user, issue_lot, token_address, from_wallet.user, True)
             return redirect("home")
 
 
@@ -315,10 +312,11 @@ def token_board_check(BuyOrder, SellOrder):
 """
 
 
-def send_token_transaction(buyer, lot, token_address, *seller):
+def send_token_transaction(buyer, lot, token_address, *seller, is_issue=False):
     seller = seller[0]
     web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
     unlock_validation(seller.wallet.num, seller.username, web3)
+
     f = open("transactions/abi.json", 'r')
     abi = json.loads(f.read())
     # contractのアドレスはトークンごと abiは共通
@@ -327,6 +325,12 @@ def send_token_transaction(buyer, lot, token_address, *seller):
     # print(seller.wallet.num)
     cnt.transact(transaction={'from': seller.wallet.num}).transfer(buyer.wallet.num, lot)
     buyer.wallet.token_balance = buyer.wallet.get_token_lot(token_address)
+    if is_issue:
+        token_user = User.objects.get(username=seller.username)
+        buyer.have_token.add(buyer.profile)
+    else:
+        token_user = User.objects.get(username=seller.username)
+        buyer.have_token.add(seller.profile)
     buyer.wallet.save()
 
 

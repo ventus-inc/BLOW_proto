@@ -18,7 +18,7 @@
         <p>Followers: {{ object.followed_by.all.count }}</p>
         <p>{{ user.wallet.balance }}:ETH
         <br>
-        <p>所有トークン
+        <p>所有トークン<br>
         {% for user in object.profile.have_token.all %}
             <a href="../{{ user.username }}">{{ user.username }}</a><br/>
         {% empty %}
