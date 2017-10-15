@@ -272,8 +272,11 @@ class TokenIssueView(View):
             token_address = hash_detail.contractAddress
             token_user = User.objects.get(username=request.user.username)
             token_user.profile.token_address = token_address
+            token_user.profile.have_token.add(token_user)
             token_user.profile.save()
-            print(token_user.profile.token_address)
+            print(token_user.profile.have_token.all())
+            token_user.profile.save()
+
             from_wallet = WalletProfile.objects.filter(num=web3.eth.coinbase).first()
             send_token_transaction(to_user, issue_lot, token_address, from_wallet.user)
             return redirect("home")

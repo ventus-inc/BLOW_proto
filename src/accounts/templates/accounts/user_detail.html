@@ -17,8 +17,13 @@
         {% endif %}
         <p>Followers: {{ object.followed_by.all.count }}</p>
         <p>{{ user.wallet.balance }}:ETH
-        <p>{{ user.wallet.token_balance }}:BLOW
-        <!-- トークントランザクション編集中 -->
+        <br>
+        <p>所有トークン
+        {% for user in object.profile.have_token.all %}
+            <a href="../{{ user.username }}">{{ user.username }}</a><br/>
+        {% empty %}
+            <p> 誰のトークン持っていません
+        {% endfor %}
         <form id='send-form' class="navbar-form navbar-left" method='POST' action='{% url "transaction:send" %}'>
             {% csrf_token %}
 
@@ -35,9 +40,9 @@
             <!-- 編集中 -->
             <a class='btn btn-link' href='{{ object.profile.get_buy_token_url }}'>BUY</a>
             <a class='btn btn-link' href='{{ object.profile.get_sell_token_url }}'>SELL</a>
-            <form type="submit" method="POST" value="発行" action='{% url "tokens:issue" %}'>
+            <form type="submit" method="POST" name='issue' action='{% url "tokens:issue" %}'>
                 {% csrf_token %}
-                <input class="btn btn-default" type="submit" />
+                <input class="btn btn-default" value='発行' type="submit" />
             </form>
 
         </p>

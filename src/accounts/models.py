@@ -56,8 +56,12 @@ class UserProfile(models.Model):
         blank=True,
         related_name='followed_by')
     image = models.ImageField(upload_to='profile_image', blank=True)
-    token_address = models.CharField(blank=True,max_length=255)
+    token_address = models.CharField(blank=True, max_length=255)
     objects = UserProfileManager()
+    have_token = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name='have_token')
 
     def __str__(self):
         return str(self.user)
@@ -75,6 +79,10 @@ class UserProfile(models.Model):
         return reverse_lazy(
             "profiles:detail",
             kwargs={"username": self.user.username})
+
+    def get_have_token(self):
+        users = self.have_token.all()
+        return users.exclude(username=self.user.username)
 
     def get_buy_token_url(self):
         return reverse_lazy(
