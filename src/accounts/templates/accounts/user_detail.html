@@ -40,10 +40,12 @@
             <!-- 編集中 -->
             <a class='btn btn-link' href='{{ object.profile.get_buy_token_url }}'>BUY</a>
             <a class='btn btn-link' href='{{ object.profile.get_sell_token_url }}'>SELL</a>
+            <p>{% if request.user.username == object.username %}
             <form type="submit" method="POST" name='issue' action='{% url "tokens:issue" %}'>
                 {% csrf_token %}
                 <input class="btn btn-default" value='発行' type="submit" />
             </form>
+            {% endif %}
 
         </p>
         <hr/>
