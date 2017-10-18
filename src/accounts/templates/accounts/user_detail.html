@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
 {% block script %}
+{% load get_token_value %}
 <script>
     $(document).ready(function(){
         loadTweetContainer("tweet-container")
@@ -18,12 +18,14 @@
         <p>Followers: {{ object.followed_by.all.count }}</p>
         <p>{{ user.wallet.balance }}:ETH
         <br>
+        <p>{{ user.wallet.token_balance }}</p>
         <p>所有トークン<br>
         {% for user in object.profile.have_token.all %}
-            <a href="../{{ user.username }}">{{ user.username }}</a><br/>
+            <a href="../{{ user.username }}">{{ user.username }}</a>:{{ user.username|get_token_value }}<br/>
         {% empty %}
             <p> トークンを持っていません
         {% endfor %}
+        {{ object.profile.get_another_token_lot }}
         <form id='send-form' class="navbar-form navbar-left" method='POST' action='{% url "transaction:send" %}'>
             {% csrf_token %}
 

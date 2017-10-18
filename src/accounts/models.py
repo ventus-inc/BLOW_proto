@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.urls import reverse_lazy
+from django.template.defaultfilters import register
 from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
 from tokens.models import Token
 
@@ -65,6 +66,7 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return str(self.user)
+
 
     def get_following(self):
         users = self.following.all()
@@ -130,6 +132,8 @@ class WalletProfile(models.Model):
 
     def __str__(self):
         return self.num
+class WalletToken(models.Model):
+    token = models.ForeignKey(WalletProfile)
 
 
 def post_save_user_receiver(sender, instance, created, *args, **kwargs):

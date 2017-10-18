@@ -8,7 +8,8 @@ register = template.Library()
 User = get_user_model()
 
 @register.inclusion_tag("accounts/snippets/recommended.html")
-def  recommended(user):
+def recommended(user):
     if isinstance(user, User):
         qs = UserProfile.objects.recommended(user)
         return {"recommended": qs}
+

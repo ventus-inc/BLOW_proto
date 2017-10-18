@@ -341,7 +341,7 @@ def send_token_transaction(buyer, lot, token_address, is_issue, *seller):
     else:
         print("---------------")
         buyer.profile.have_token.add(seller)
-        print(seller.profile)
+        print(token_address)
     buyer.profile.save()
     print(buyer.have_token.all())
     buyer.wallet.save()
