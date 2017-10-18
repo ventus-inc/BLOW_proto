@@ -15,7 +15,7 @@ def get_token_value(touser,fromuser):
     web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
     #web3.personal.unlockAccount(touser.wallet.num, fromuser.username)
     print(fromuser.username)
-    web3.personal.unlockAccount(fromuser.wallet.num, fromuser.username)
+    #web3.personal.unlockAccount(fromuser.wallet.num, fromuser.username)
     f = open("transactions/abi.json", 'r')
     abi = json.loads(f.read())
     cnt = web3.eth.contract(abi, touser.profile.token_address)
