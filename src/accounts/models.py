@@ -67,7 +67,6 @@ class UserProfile(models.Model):
     def __str__(self):
         return str(self.user)
 
-
     def get_following(self):
         users = self.following.all()
         return users.exclude(username=self.user.username)

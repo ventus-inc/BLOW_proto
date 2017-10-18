@@ -11,19 +11,16 @@ User = get_user_model()
 
 
 @register.filter()
-def get_token_value(value):
+def get_token_value(touser,fromuser):
     web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
-    web3.personal.unlockAccount(User.profile.wallet.num, User.profile.username)
+    #web3.personal.unlockAccount(touser.wallet.num, fromuser.username)
+    print(fromuser.username)
+    web3.personal.unlockAccount(fromuser.wallet.num, fromuser.username)
     f = open("transactions/abi.json", 'r')
     abi = json.loads(f.read())
-    """
-    for token_user in User.profile.have_token.all():
-        cnt = web3.eth.contract(abi, token_user.token_address)
-        tokenlot = cnt.call().balanceOf(User.wallet.num)
-        print("----------------")
-        print(token_user.username)
-        print(tokenlot)
-        print("----------------")
-    # print(tokenlot)
-    """
-    return 0
+    cnt = web3.eth.contract(abi, touser.profile.token_address)
+    tokenlot = cnt.call().balanceOf(fromuser.wallet.num)
+    #f = open("transactions/abi.json", 'r')
+    #abi = json.loads(f.read())
+
+    return tokenlot
