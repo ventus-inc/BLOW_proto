@@ -1,5 +1,4 @@
 from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
-from time import sleep
 import sys
 import json
 import os

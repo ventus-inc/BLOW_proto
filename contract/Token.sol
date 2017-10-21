@@ -91,7 +91,7 @@ contract FixedSupplyToken is ERC20Interface {
     }
         function buy(address _sender) internal {
 
-        // Do not allow creating 0 or more than the cap tokens.
+        // Do not allow creating 0 tokens.
         if (msg.value == 0) throw;
 
         var numTokens = msg.value * 100000;
