@@ -6,7 +6,8 @@ from .views import (
     SellTokenView,
 	BuyTokenConfirmView,
     SellTokenConfirmView,
-	MyAssetTokensView
+	MyAssetTokensView,
+    TokenIssueView,
     )
 
 urlpatterns = [
@@ -17,5 +18,6 @@ urlpatterns = [
     url(r'^(?P<username>[\w.@+-]+)/buy/confirm$', BuyTokenConfirmView.as_view(), name='buy_confirm'),
     url(r'^(?P<username>[\w.@+-]+)/sell/confirm$', SellTokenConfirmView.as_view(), name='sell_confirm'),
     url(r'^(?P<username>[\w.@+-]+)/asset$', MyAssetTokensView.as_view(), name='asset'),
+    url(r'^issue/$', TokenIssueView.as_view(), name='issue'),
     # url(r'^buy/$', BuyTokenView.as_view(), name='buy')
 ]

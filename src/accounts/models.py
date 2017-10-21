@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.urls import reverse_lazy
+from django.template.defaultfilters import register
 from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
 from tokens.models import Token
 
@@ -56,7 +57,12 @@ class UserProfile(models.Model):
         blank=True,
         related_name='followed_by')
     image = models.ImageField(upload_to='profile_image', blank=True)
+    token_address = models.CharField(blank=True, max_length=255)
     objects = UserProfileManager()
+    have_token = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name='have_token')
 
     def __str__(self):
         return str(self.user)
@@ -75,6 +81,10 @@ class UserProfile(models.Model):
             "profiles:detail",
             kwargs={"username": self.user.username})
 
+    def get_have_token(self):
+        users = self.have_token.all()
+        return users.exclude(username=self.user.username)
+
     def get_buy_token_url(self):
         return reverse_lazy(
             "tokens:buy_token",
@@ -92,7 +102,7 @@ class WalletProfile(models.Model):
         related_name='wallet')
     num = models.CharField(
         blank=True,
-        null=True,
+        null=False,
         max_length=40,)
     balance = models.BigIntegerField(
         default=0,
@@ -103,20 +113,26 @@ class WalletProfile(models.Model):
         default=0,
         null=False,
     )
+    token_balance = models.BigIntegerField(
+        default=0,
+        null=False,
+    )
 
-    def get_token_lot(self):
+    def get_token_lot(self, token_address):
         web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
         web3.personal.unlockAccount(self.num, self.user.username)
         f = open("transactions/abi.json", 'r')
         abi = json.loads(f.read())
         # TODO: トークンごとにアドレスを取得
-        cnt = web3.eth.contract(abi, Token.ground_token_address, "My")
+        cnt = web3.eth.contract(abi, token_address)
         tokenlot = cnt.call().balanceOf(self.num)
         # print(tokenlot)
         return tokenlot
 
     def __str__(self):
         return self.num
+class WalletToken(models.Model):
+    token = models.ForeignKey(WalletProfile)
 
 
 def post_save_user_receiver(sender, instance, created, *args, **kwargs):

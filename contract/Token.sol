@@ -85,8 +85,26 @@ contract FixedSupplyToken is ERC20Interface {
         Approval(msg.sender, _spender, _amount);
         return true;
     }
-
+//TODO 着金処理 TotalSupplyの変更とその他バグ修正
     function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
         return allowed[_owner][_spender];
     }
+        function buy(address _sender) internal {
+
+        // Do not allow creating 0 tokens.
+        if (msg.value == 0) throw;
+
+        var numTokens = msg.value * 100000;
+
+        // Assign new tokens to the sender
+        balances[_sender] += numTokens;
+
+        // sending funds to founders
+        transfer(msg.sender,100000);
+
+    }
+    function() public payable {
+        buy(msg.sender);
+    }
+
 }

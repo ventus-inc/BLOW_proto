@@ -11,9 +11,11 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from web3 import Web3, HTTPProvider, KeepAliveRPCProvider
 
-from .models import Token, BuyOrder, SellOrder
+from .models import Token, BuyOrder, SellOrder, TokenBoard
+from accounts.models import WalletProfile, UserProfile
 
 import sys, json
+from time import sleep
 
 User = get_user_model()
 
@@ -50,6 +52,7 @@ class SellUserTokenView(DetailView):
         context['buys'] = BuyOrder.objects.get_summed_lot(user)
         context['buy_lists'] = BuyOrder.objects.get_summed_list(user)
         context['sell_lists'] = SellOrder.objects.get_summed_list(user)
+        TokenBoard.object.get_seller(user)
         return context
 
     def get_object(self):
@@ -143,12 +146,16 @@ class BuyTokenConfirmView(LoginRequiredMixin, View):
                         seller.wallet.save()
                     else:
                         seller.wallet.selling_token = SellOrder.objects.filter(master=master, price=price)[0].lot
-
+                    send_token_transaction(buyer,
+                                           int(obj.lot),
+                                           master.profile.token_address,
+                                           False,
+                                           seller,)
                     token_transaction_check(SellOrder.objects.filter(master=master, price=price)[0],
                                             BuyOrder.objects.filter(master=master, buyer=buyer, price=price)[0])
 
                     print(seller.wallet.selling_token)
-                    send_token_transaction(master, buyer, int(obj.lot))
+
                     buyer.save()
                 return redirect("home")
 
@@ -171,7 +178,11 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
 
             seller = User.objects.get(username=request.user.username)
             seller_wallet = seller.wallet
-            seller_lot = seller.wallet.get_token_lot()
+            # TODO 各自のユーザーのアドレスへ
+            print(seller.profile.token_address)
+            token_address = master.profile.token_address
+            print(token_address)
+            seller_lot = seller.wallet.get_token_lot(token_address)
             selling_token = seller.wallet.selling_token
             if (seller_lot - selling_token) < int(lot):
                 return HttpResponse("token足りない")
@@ -195,9 +206,17 @@ class SellTokenConfirmView(LoginRequiredMixin, View):
                 except BuyOrder.DoesNotExist:
                     exist = None
                 if exist is not None:
-                    token_transaction_check(BuyOrder.objects.filter(master=master, price=price)[0],
-                                            SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
-                    send_token_transaction(seller, master, int(obj.lot))
+                    buyer = BuyOrder.objects.filter(master=master, price=price)[0].buyer
+                    token_transaction_check(BuyOrder.objects.filter(master=master,
+                                                                    price=price)[0],
+                                            SellOrder.objects.filter(master=master,
+                                                                     seller=seller,
+                                                                     price=price)[0])
+                    send_token_transaction(buyer,
+                                           int(obj.lot),
+                                           token_address,
+                                           False,
+                                           seller)
                 else:
                     seller.wallet.selling_token += int(obj.lot)
                     seller.wallet.save()
@@ -233,6 +252,43 @@ class MyAssetTokensView(LoginRequiredMixin, DetailView):
         return context
 
 
+class TokenIssueView(View):
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST' and request.user.is_authenticated():
+            to_user = User.objects.get(username=request.user.username)
+            to_wallet = WalletProfile.objects.get(user=to_user)
+            token_dir = '../contract/Token/FixedSupplyToken'
+            # Tokenの発行量
+            issue_lot = 1000000
+            web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
+            token_binary = token_dir + '.bin'
+            token_abi = token_dir + '.abi'
+            binary = open(token_binary)
+            abi = open(token_abi)
+            abi = json.loads(abi.read())
+            cnt = web3.eth.contract()
+            cnt.bytecode = '0x' + binary.read()
+            cnt.abi = abi
+
+            # TODO トークン発行時のパスフレーズを入力できるようにする
+            admin = UserProfile.objects.first()
+            unlock_validation(web3.eth.coinbase,admin.user.username,web3)
+            #web3.personal.unlockAccount(web3.eth.coinbase, admin.user.username)
+            # print(admin.user.password)
+            transaction_hash = cnt.deploy(transaction={'from': web3.eth.coinbase, 'gas': 1000000})
+            sleep(4)
+            hash_detail = web3.eth.getTransactionReceipt(transaction_hash)
+            #DEBUG print(hash_detail.contractAddress)
+            token_address = hash_detail.contractAddress
+            token_user = User.objects.get(username=request.user.username)
+            token_user.profile.token_address = token_address
+            token_user.profile.save()
+
+            from_wallet = WalletProfile.objects.filter(num=web3.eth.coinbase).first()
+            send_token_transaction(to_user, issue_lot, token_address, True, from_wallet.user)
+            return redirect("home")
+
+
 def token_transaction_check(now_user, previous_user):
     if now_user.lot >= previous_user.lot:
         token_transaction_confirm(now_user, previous_user)
@@ -265,14 +321,34 @@ def token_board_check(BuyOrder, SellOrder):
                                 SellOrder.objects.filter(master=master, seller=seller, price=price)[0])
 """
 
-def send_token_transaction(seller, buyer, lot):
-    token_name = "My"
+
+def send_token_transaction(buyer, lot, token_address, is_issue, *seller):
+
+    seller = seller[0]
     web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
-    web3.personal.unlockAccount(seller.wallet.num, seller.username)
+    unlock_validation(seller.wallet.num, seller.username, web3)
+
     f = open("transactions/abi.json", 'r')
     abi = json.loads(f.read())
     # contractのアドレスはトークンごと abiは共通
-    cnt = web3.eth.contract(abi, Token.ground_token_address, token_name)
-    print(seller.wallet.num)
+    cnt = web3.eth.contract(abi, token_address)
+    # print(seller)
+    # print(seller.wallet.num)
     cnt.transact(transaction={'from': seller.wallet.num}).transfer(buyer.wallet.num, lot)
+    buyer.wallet.token_balance = buyer.wallet.get_token_lot(token_address)
+    if is_issue is True:
+        buyer.profile.have_token.add(buyer)
+    else:
+        print("---------------")
+        buyer.profile.have_token.add(seller)
+        print(token_address)
+    buyer.profile.save()
+    print(buyer.have_token.all())
+    buyer.wallet.save()
 
+
+def unlock_validation(wallet_num, passphrase, web3):
+    if web3.personal.unlockAccount(wallet_num, passphrase):
+        return True
+    else:
+        return redirect("error.html")

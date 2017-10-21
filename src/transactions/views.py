@@ -43,16 +43,18 @@ class SendTransactionView(View):
 class SendTokenTransactionView(View):
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
+            tokenname = "My"
             from_wallet = WalletProfile.objects.get(user=request.user)
             to_user = request.POST.get("username")
             to_user = User.objects.get(username=to_user)
             to_wallet = WalletProfile.objects.get(user=to_user)
+
             web3 = Web3(KeepAliveRPCProvider(host='localhost', port='8545'))
             web3.personal.unlockAccount(from_wallet.num, request.user.username)
             # 暫定的にABIを直接入力(どのトークンでも共通)
             f = open("transactions/abi.json", 'r')
             abi = json.loads(f.read())
-            cnt = web3.eth.contract(abi, Token.ground_token_address, "My")
+            cnt = web3.eth.contract(abi, Token.ground_token_address, tokenname)
             cnt.transact(transaction={'from': from_wallet.num}).transfer(to_wallet.num, 10)
             # web3.eth.contract()
         return render(request, "home.html")
