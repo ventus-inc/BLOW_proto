@@ -25,7 +25,7 @@ class TokenBoard(models.Model):
 class Token(models.Model):
     """持っているtoken
     """
-    ground_token_address = "0x3F5ADB6683d058F9f0D0aDe18a0e06539d4203B2"
+    ground_token_address = GROUND_TOKEN_ADDRESS
     token_board = models.ForeignKey(
         TokenBoard, null=True, blank=True)  # 暫定的にblank=True
     publisher = models.ForeignKey(

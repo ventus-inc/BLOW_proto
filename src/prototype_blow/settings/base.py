@@ -130,3 +130,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn')
+GROUND_TOKEN_ADDRESS = "0x3F5ADB6683d058F9f0D0aDe18a0e06539d4203B2"

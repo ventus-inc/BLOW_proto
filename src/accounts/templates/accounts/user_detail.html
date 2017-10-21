@@ -25,7 +25,7 @@
         {% empty %}
             <p> トークンを持っていません
         {% endfor %}
-        
+
         <form id='send-form' class="navbar-form navbar-left" method='POST' action='{% url "transaction:send" %}'>
             {% csrf_token %}
 
