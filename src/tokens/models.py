@@ -25,7 +25,7 @@ class TokenBoard(models.Model):
 class Token(models.Model):
     """持っているtoken
     """
-    ground_token_address = GROUND_TOKEN_ADDRESS
+    ground_token_address = settings.GROUND_TOKEN_ADDRESS
     token_board = models.ForeignKey(
         TokenBoard, null=True, blank=True)  # 暫定的にblank=True
     publisher = models.ForeignKey(
